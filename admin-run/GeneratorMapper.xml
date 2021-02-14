@@ -17,7 +17,7 @@
                         password="ivoeau8912">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.moliang.run.model"
+        <javaModelGenerator targetPackage="com.moliang.run.log.model"
                             targetProject="src/main/java">
             <property name="enableSubPackages" value="false" />
             <property name="trimStrings" value="false" />
@@ -33,6 +33,6 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 数据库表名及对应的 Java 模型类名 -->
-        <table tableName="web_log" domainObjectName="Web_log"/>
+        <table tableName="web_log" domainObjectName="WebLog"/>
     </context>
 </generatorConfiguration>

@@ -3,7 +3,10 @@ package com.moliang.run.log.aspect;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.json.JSONUtil;
+import com.moliang.run.log.annotation.Persistence;
 import com.moliang.run.log.model.WebLog;
+import com.moliang.run.log.service.WebLogService;
+import com.moliang.utils.AgentUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.marker.Markers;
@@ -12,6 +15,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -39,6 +43,9 @@ import java.util.Map;
 @Order(1)
 @Slf4j
 public class WebLogAspect {
+
+    @Autowired
+    private WebLogService webLogService;
 
     @Pointcut("execution(public * com.moliang.run.*.controller.*.*(..))" +
             "||execution(public * com.moliang.*.controller.*.*(..))")
@@ -73,11 +80,11 @@ public class WebLogAspect {
         String urlStr = request.getRequestURL().toString();
         webLog.setBasePath(StrUtil.removeSuffix(urlStr, URLUtil.url(urlStr).getPath()));
         webLog.setIp(request.getRemoteUser());
+        webLog.setBrowser(AgentUtil.getBrowser(request));
         webLog.setMethod(request.getMethod());
         webLog.setParameter(getParameter(method, joinPoint.getArgs()));
         webLog.setResult(result);
-        webLog.setSpendTime((int) (endTime - startTime));
-        webLog.setStartTime(startTime);
+        webLog.setSpendTime(endTime - startTime);
         webLog.setUri(request.getRequestURI());
         webLog.setUrl(request.getRequestURL().toString());
         Map<String,Object> logMap = new HashMap<>();
@@ -86,8 +93,13 @@ public class WebLogAspect {
         logMap.put("parameter",webLog.getParameter());
         logMap.put("spendTime",webLog.getSpendTime());
         logMap.put("description",webLog.getDescription());
-//        LOGGER.info("{}", JSONUtil.parse(webLog));
-        log.info(Markers.appendEntries(logMap), JSONUtil.parse(webLog).toString());
+        if(method.isAnnotationPresent(Persistence.class)) {
+            webLog.setAddress(AgentUtil.getLocalCityInfo(webLog.getIp()));
+            webLogService.save(webLog);
+            log.info(Markers.appendEntries(logMap), JSONUtil.parse(webLog).toString() + "(已存入数据库)");
+        } else {
+            log.info(Markers.appendEntries(logMap), JSONUtil.parse(webLog).toString());
+        }
         return result;
     }
 

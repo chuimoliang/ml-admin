@@ -1,58 +1,147 @@
 package com.moliang.run.log.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import cn.hutool.json.JSONUtil;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
-/**
- * @Use
- * @Author Chui moliang
- * @Date 2021/2/11 18:03
- * @Version 1.0
- */
-@Data
-@EqualsAndHashCode(callSuper = false)
 public class WebLog {
-
-    /** 数据库主键 **/
     private Long id;
 
-    /** 操作描述 **/
     private String description;
 
-    /** 操作用户 **/
     private String username;
 
-    /** 操作时间 **/
-    private Long startTime;
+    private String address;
 
-    /** 消耗时间 **/
-    private Integer spendTime;
+    private Long spendTime;
 
-    /** 根路径 **/
     private String basePath;
 
-    /** URI **/
     private String uri;
 
-    /** URL **/
     private String url;
 
-    /** 请求类型 **/
     private String method;
 
-    /** IP地址 **/
     private String ip;
 
-    /** 请求参数 **/
-    private Object parameter;
+    private String parameter;
 
-    /** 返回结果 **/
-    private Object result;
+    private String result;
 
-    /** 插入日期 **/
     private Date createTime;
 
+    private String browser;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Long getSpendTime() {
+        return spendTime;
+    }
+
+    public void setSpendTime(Long spendTime) {
+        this.spendTime = spendTime;
+    }
+
+    public String getBasePath() {
+        return basePath;
+    }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getParameter() {
+        return parameter;
+    }
+
+    public void setParameter(Object parameter) {
+        this.parameter = JSONUtil.parse(parameter).toString();
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = JSONUtil.parse(result).toString();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getBrowser() {
+        return browser;
+    }
+
+    public void setBrowser(String browser) {
+        this.browser = browser;
+    }
 }

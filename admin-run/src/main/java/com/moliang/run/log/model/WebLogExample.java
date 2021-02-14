@@ -1,17 +1,17 @@
-package com.moliang.run.model;
+package com.moliang.run.log.model;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Web_logExample {
+public class WebLogExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public Web_logExample() {
+    public WebLogExample() {
         oredCriteria = new ArrayList<>();
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.moliang.run.mapper.Web_logMapper">
-  <resultMap id="BaseResultMap" type="com.moliang.run.model.Web_log">
+<mapper namespace="com.moliang.run.mapper.WebLogMapper">
+  <resultMap id="BaseResultMap" type="com.moliang.run.log.model.WebLog">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="username" jdbcType="VARCHAR" property="username" />
@@ -76,10 +76,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, description, username, address, spend_time, base_path, uri, url, method, ip, 
+    `id`, description, username, address, spend_time, base_path, uri, url, method, ip,
     parameter, result, create_time, browser
   </sql>
-  <select id="selectByExample" parameterType="com.moliang.run.model.Web_logExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.moliang.run.log.model.WebLogExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -103,25 +103,25 @@
     delete from web_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.moliang.run.model.Web_logExample">
+  <delete id="deleteByExample" parameterType="com.moliang.run.log.model.WebLogExample">
     delete from web_log
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.moliang.run.model.Web_log">
-    insert into web_log (id, description, username, 
+  <insert id="insert" parameterType="com.moliang.run.log.model.WebLog">
+    insert into web_log (description, username,
       address, spend_time, base_path, 
       uri, url, method, ip, 
       parameter, result, create_time, 
       browser)
-    values (#{id,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+    values (#{description,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
       #{address,jdbcType=VARCHAR}, #{spendTime,jdbcType=BIGINT}, #{basePath,jdbcType=VARCHAR}, 
       #{uri,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
       #{parameter,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{browser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.moliang.run.model.Web_log">
+  <insert id="insertSelective" parameterType="com.moliang.run.log.model.WebLog">
     insert into web_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -212,7 +212,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.moliang.run.model.Web_logExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.moliang.run.log.model.WebLogExample" resultType="java.lang.Long">
     select count(*) from web_log
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -288,7 +288,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.moliang.run.model.Web_log">
+  <update id="updateByPrimaryKeySelective" parameterType="com.moliang.run.log.model.WebLog">
     update web_log
     <set>
       <if test="description != null">
@@ -333,7 +333,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.moliang.run.model.Web_log">
+  <update id="updateByPrimaryKey" parameterType="com.moliang.run.log.model.WebLog">
     update web_log
     set description = #{description,jdbcType=VARCHAR},
       username = #{username,jdbcType=VARCHAR},
