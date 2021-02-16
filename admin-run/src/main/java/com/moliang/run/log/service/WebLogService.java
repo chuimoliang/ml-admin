@@ -39,6 +39,12 @@ public interface WebLogService {
     List<WebLog> listAll();
 
     /**
+     * 获取所有符合查询条件的日志
+     * @return 日志集合
+     */
+    List<WebLog> listAll(LogQueryParam param);
+
+    /**
      * 根据条件分页查询日志
      * @param param 日志查询条件
      * @param pageSize 数据页大小

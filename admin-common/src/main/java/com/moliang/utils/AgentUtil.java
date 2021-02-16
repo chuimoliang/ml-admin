@@ -23,7 +23,9 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class AgentUtil {
 
-    private final static String preUrl = "http://whois.pconline.com.cn/ipJson.jsp?ip=";
+    private static final String UNKNOWN = "unknown";
+
+    private final static String preUrl = "http://whois.pconline.com.cn/ip.jsp?ip=";
     private final static String rearUrl = "&json=true";
 
     /**
@@ -37,6 +39,7 @@ public class AgentUtil {
         try {
             //接口地址
             String url = preUrl + ip + rearUrl;
+            log.info(url);
             URL uri = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
             connection.setRequestMethod("GET");
@@ -63,6 +66,27 @@ public class AgentUtil {
             }
         }
         return ans;
+    }
+
+    /**
+     * 获取ip地址
+     */
+    public static String getIp(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        String comma = ",";
+        if (ip.contains(comma)) {
+            ip = ip.split(",")[0];
+        }
+        return ip;
     }
 
     public static String getBrowser(HttpServletRequest request) {

@@ -52,7 +52,11 @@ public class WebLogServiceImpl implements WebLogService {
     }
 
     @Override
-    public List<WebLog> list(LogQueryParam param, Integer pageSize, Integer pageNum) {
+    public List<WebLog> listAll(LogQueryParam param) {
+        return webLogMapper.selectByExample(getExampleByParam(param));
+    }
+
+    private WebLogExample getExampleByParam(LogQueryParam param) {
         WebLogExample example = new WebLogExample();
         WebLogExample.Criteria criteria = example.createCriteria();
         if(param.getUsername() != null && !param.getUsername().equals("")) {
@@ -77,8 +81,13 @@ public class WebLogServiceImpl implements WebLogService {
         } else if(param.getToTime() != null) {
             criteria.andCreateTimeLessThanOrEqualTo(param.getToTime());
         }
+        return example;
+    }
+
+    @Override
+    public List<WebLog> list(LogQueryParam param, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
-        return webLogMapper.selectByExample(example);
+        return webLogMapper.selectByExample(getExampleByParam(param));
     }
 
     @Override
@@ -108,6 +117,6 @@ public class WebLogServiceImpl implements WebLogService {
 
     @Override
     public void delete(Long id) {
-
+        webLogMapper.deleteByPrimaryKey(id);
     }
 }

@@ -22,6 +22,29 @@ public enum ResponseCode implements IErrorCode {
         this.message = message;
     }
 
+    public static String getMessage(long code) {
+        switch ((int) code) {
+            case 200 -> {
+                return ResponseCode.SUCCESS.getMessage();
+            }
+            case 500 -> {
+                return ResponseCode.FAILED.getMessage();
+            }
+            case 404 -> {
+                return ResponseCode.VALIDATE_FAILED.getMessage();
+            }
+            case 401 -> {
+                return ResponseCode.UNAUTHORIZED.getMessage();
+            }
+            case 403 -> {
+                return ResponseCode.FORBIDDEN.getMessage();
+            }
+            default -> {
+                return  "unknown";
+            }
+        }
+    }
+
     public long getCode() {
         return code;
     }

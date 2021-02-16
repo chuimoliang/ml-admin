@@ -3,6 +3,7 @@ package com.moliang.run.security.controller;
 import cn.hutool.core.collection.CollUtil;
 import com.moliang.model.DataPage;
 import com.moliang.model.NorResponse;
+import com.moliang.run.log.annotation.Persistence;
 import com.moliang.run.model.AmsAdmin;
 import com.moliang.run.model.AmsRole;
 import com.moliang.run.security.param.AmsAdminLoginParam;
@@ -85,6 +86,7 @@ public class AmsAdminController {
         return NorResponse.success(tokenMap);
     }
 
+    @Persistence
     @ApiOperation(value = "获取当前登录用户信息")
     @GetMapping(value = "/info")
     public NorResponse getAdminInfo(Principal principal) {

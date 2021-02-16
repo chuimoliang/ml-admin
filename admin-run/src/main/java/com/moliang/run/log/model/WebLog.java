@@ -118,15 +118,16 @@ public class WebLog {
     }
 
     public void setParameter(Object parameter) {
-        this.parameter = JSONUtil.parse(parameter).toString();
+        if(parameter == null) this.parameter = null;
+        else this.parameter = JSONUtil.parse(parameter).toString();
     }
 
     public String getResult() {
         return result;
     }
 
-    public void setResult(Object result) {
-        this.result = JSONUtil.parse(result).toString();
+    public void setResult(String result) {
+        this.result = result;
     }
 
     public Date getCreateTime() {

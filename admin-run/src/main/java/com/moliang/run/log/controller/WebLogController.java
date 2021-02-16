@@ -1,8 +1,12 @@
 package com.moliang.run.log.controller;
 
+import com.moliang.run.log.annotation.Persistence;
+import com.moliang.run.log.model.LogQueryParam;
+import com.moliang.run.log.service.WebLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +27,17 @@ import java.io.IOException;
 @RequestMapping("api/logs")
 @Api(tags = "日志管理")
 public class WebLogController {
-    /**
 
-    private final LogService logService;
+    @Autowired
+    private WebLogService logService;
 
-    @Log("导出数据")
     @ApiOperation("导出数据")
+    @Persistence
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check()")
-    public void download(HttpServletResponse response, LogQueryCriteria criteria) throws IOException {
-        criteria.setLogType("INFO");
-        logService.download(logService.queryAll(criteria), response);
+    public void download(HttpServletResponse response, LogQueryParam queryParam) throws IOException {
+        logService.download(logService.listAll(queryParam), response);
     }
-
+/**
     @Log("导出错误数据")
     @ApiOperation("导出错误数据")
     @GetMapping(value = "/error/download")

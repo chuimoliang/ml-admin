@@ -3,6 +3,8 @@ package com.moliang.run.log.aspect;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.json.JSONUtil;
+import com.moliang.enums.ResponseCode;
+import com.moliang.model.NorResponse;
 import com.moliang.run.log.annotation.Persistence;
 import com.moliang.run.log.model.WebLog;
 import com.moliang.run.log.service.WebLogService;
@@ -17,6 +19,9 @@ import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,6 +74,11 @@ public class WebLogAspect {
         //记录请求信息(通过Logstash传入Elasticsearch)
         WebLog webLog = new WebLog();
         Object result = joinPoint.proceed();
+        try {
+            result = (NorResponse) result;
+        } catch (ClassCastException e) {
+            log.error(e.getMessage());
+        }
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
@@ -78,12 +88,19 @@ public class WebLogAspect {
         }
         long endTime = System.currentTimeMillis();
         String urlStr = request.getRequestURL().toString();
+        webLog.setUsername(request.getRemoteUser());
         webLog.setBasePath(StrUtil.removeSuffix(urlStr, URLUtil.url(urlStr).getPath()));
-        webLog.setIp(request.getRemoteUser());
+        webLog.setIp(AgentUtil.getIp(request));
         webLog.setBrowser(AgentUtil.getBrowser(request));
         webLog.setMethod(request.getMethod());
         webLog.setParameter(getParameter(method, joinPoint.getArgs()));
-        webLog.setResult(result);
+        if (result != null) {
+            try {
+                webLog.setResult(ResponseCode.getMessage(((NorResponse) result).getCode()));
+            } catch (ClassCastException e) {
+                log.error(e.getMessage());
+            }
+        }
         webLog.setSpendTime(endTime - startTime);
         webLog.setUri(request.getRequestURI());
         webLog.setUrl(request.getRequestURL().toString());
@@ -93,6 +110,7 @@ public class WebLogAspect {
         logMap.put("parameter",webLog.getParameter());
         logMap.put("spendTime",webLog.getSpendTime());
         logMap.put("description",webLog.getDescription());
+        logMap.put("browser", webLog.getBrowser());
         if(method.isAnnotationPresent(Persistence.class)) {
             webLog.setAddress(AgentUtil.getLocalCityInfo(webLog.getIp()));
             webLogService.save(webLog);
