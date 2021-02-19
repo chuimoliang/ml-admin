@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moliang.run.mnt.mapper.SmsItemMapper">
+  <resultMap id="BaseResultMap" type="com.moliang.run.mnt.model.SmsItem">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="port" jdbcType="INTEGER" property="port" />
+    <result column="upload_path" jdbcType="VARCHAR" property="uploadPath" />
+    <result column="deploy_path" jdbcType="VARCHAR" property="deployPath" />
+    <result column="backup_path" jdbcType="VARCHAR" property="backupPath" />
+    <result column="start_script" jdbcType="VARCHAR" property="startScript" />
+    <result column="deploy_script" jdbcType="VARCHAR" property="deployScript" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    `id`, name, port, upload_path, deploy_path, backup_path, start_script, deploy_script,
+    create_by, update_by, update_time, create_time
+  </sql>
+  <select id="selectByExample" parameterType="com.moliang.run.mnt.model.SmsItemExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sms_item
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sms_item
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sms_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.moliang.run.mnt.model.SmsItemExample">
+    delete from sms_item
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.moliang.run.mnt.model.SmsItem">
+    insert into sms_item (id, name, port, 
+      upload_path, deploy_path, backup_path, 
+      start_script, deploy_script, create_by, 
+      update_by, update_time, create_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, 
+      #{uploadPath,jdbcType=VARCHAR}, #{deployPath,jdbcType=VARCHAR}, #{backupPath,jdbcType=VARCHAR}, 
+      #{startScript,jdbcType=VARCHAR}, #{deployScript,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
+      #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.moliang.run.mnt.model.SmsItem">
+    insert into sms_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="port != null">
+        port,
+      </if>
+      <if test="uploadPath != null">
+        upload_path,
+      </if>
+      <if test="deployPath != null">
+        deploy_path,
+      </if>
+      <if test="backupPath != null">
+        backup_path,
+      </if>
+      <if test="startScript != null">
+        start_script,
+      </if>
+      <if test="deployScript != null">
+        deploy_script,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null">
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="uploadPath != null">
+        #{uploadPath,jdbcType=VARCHAR},
+      </if>
+      <if test="deployPath != null">
+        #{deployPath,jdbcType=VARCHAR},
+      </if>
+      <if test="backupPath != null">
+        #{backupPath,jdbcType=VARCHAR},
+      </if>
+      <if test="startScript != null">
+        #{startScript,jdbcType=VARCHAR},
+      </if>
+      <if test="deployScript != null">
+        #{deployScript,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.moliang.run.mnt.model.SmsItemExample" resultType="java.lang.Long">
+    select count(*) from sms_item
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update sms_item
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.port != null">
+        port = #{record.port,jdbcType=INTEGER},
+      </if>
+      <if test="record.uploadPath != null">
+        upload_path = #{record.uploadPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deployPath != null">
+        deploy_path = #{record.deployPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.backupPath != null">
+        backup_path = #{record.backupPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startScript != null">
+        start_script = #{record.startScript,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deployScript != null">
+        deploy_script = #{record.deployScript,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update sms_item
+    set id = #{record.id,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      port = #{record.port,jdbcType=INTEGER},
+      upload_path = #{record.uploadPath,jdbcType=VARCHAR},
+      deploy_path = #{record.deployPath,jdbcType=VARCHAR},
+      backup_path = #{record.backupPath,jdbcType=VARCHAR},
+      start_script = #{record.startScript,jdbcType=VARCHAR},
+      deploy_script = #{record.deployScript,jdbcType=VARCHAR},
+      create_by = #{record.createBy,jdbcType=VARCHAR},
+      update_by = #{record.updateBy,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.moliang.run.mnt.model.SmsItem">
+    update sms_item
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null">
+        port = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="uploadPath != null">
+        upload_path = #{uploadPath,jdbcType=VARCHAR},
+      </if>
+      <if test="deployPath != null">
+        deploy_path = #{deployPath,jdbcType=VARCHAR},
+      </if>
+      <if test="backupPath != null">
+        backup_path = #{backupPath,jdbcType=VARCHAR},
+      </if>
+      <if test="startScript != null">
+        start_script = #{startScript,jdbcType=VARCHAR},
+      </if>
+      <if test="deployScript != null">
+        deploy_script = #{deployScript,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.moliang.run.mnt.model.SmsItem">
+    update sms_item
+    set name = #{name,jdbcType=VARCHAR},
+      port = #{port,jdbcType=INTEGER},
+      upload_path = #{uploadPath,jdbcType=VARCHAR},
+      deploy_path = #{deployPath,jdbcType=VARCHAR},
+      backup_path = #{backupPath,jdbcType=VARCHAR},
+      start_script = #{startScript,jdbcType=VARCHAR},
+      deploy_script = #{deployScript,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

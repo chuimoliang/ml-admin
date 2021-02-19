@@ -113,12 +113,12 @@
     insert into web_log (description, username,
       address, spend_time, base_path, 
       uri, url, method, ip, 
-      parameter, result, create_time, 
+      parameter, result,
       browser)
     values (#{description,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
       #{address,jdbcType=VARCHAR}, #{spendTime,jdbcType=BIGINT}, #{basePath,jdbcType=VARCHAR}, 
       #{uri,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
-      #{parameter,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{parameter,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR},
       #{browser,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.moliang.run.log.model.WebLog">

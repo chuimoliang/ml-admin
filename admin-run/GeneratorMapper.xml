@@ -17,22 +17,22 @@
                         password="ivoeau8912">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.moliang.run.log.model"
+        <javaModelGenerator targetPackage="com.moliang.run.mnt.model"
                             targetProject="src/main/java">
             <property name="enableSubPackages" value="false" />
             <property name="trimStrings" value="false" />
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="com.moliang.run.mapper"
+        <sqlMapGenerator targetPackage="com.moliang.run.mnt.mapper"
                          targetProject="src/main/java">
             <property name="enableSubPackages" value="false" />
         </sqlMapGenerator>
 
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.moliang.run.mapper" targetProject="src/main/java">
+                             targetPackage="com.moliang.run.mnt.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 数据库表名及对应的 Java 模型类名 -->
-        <table tableName="web_log" domainObjectName="WebLog"/>
+        <table tableName="sms_item" domainObjectName="SmsItem"/>
     </context>
 </generatorConfiguration>

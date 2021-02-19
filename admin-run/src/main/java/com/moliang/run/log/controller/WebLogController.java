@@ -1,5 +1,8 @@
 package com.moliang.run.log.controller;
 
+import com.moliang.enums.ResponseCode;
+import com.moliang.exception.ApiException;
+import com.moliang.model.NorResponse;
 import com.moliang.run.log.annotation.Persistence;
 import com.moliang.run.log.model.LogQueryParam;
 import com.moliang.run.log.service.WebLogService;
@@ -11,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,62 +43,32 @@ public class WebLogController {
     public void download(HttpServletResponse response, LogQueryParam queryParam) throws IOException {
         logService.download(logService.listAll(queryParam), response);
     }
-/**
-    @Log("导出错误数据")
-    @ApiOperation("导出错误数据")
-    @GetMapping(value = "/error/download")
-    @PreAuthorize("@el.check()")
-    public void downloadErrorLog(HttpServletResponse response, LogQueryCriteria criteria) throws IOException {
-        criteria.setLogType("ERROR");
-        logService.download(logService.queryAll(criteria), response);
-    }
 
     @GetMapping
     @ApiOperation("日志查询")
-    @PreAuthorize("@el.check()")
-    public ResponseEntity<Object> query(LogQueryCriteria criteria, Pageable pageable){
-        criteria.setLogType("INFO");
-        return new ResponseEntity<>(logService.queryAll(criteria,pageable), HttpStatus.OK);
+    public NorResponse query( LogQueryParam queryParam,
+                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
+        return NorResponse.success(logService.list(queryParam, pageSize, pageNum));
     }
 
     @GetMapping(value = "/user")
     @ApiOperation("用户日志查询")
-    public ResponseEntity<Object> queryUserLog(LogQueryCriteria criteria, Pageable pageable){
-        criteria.setLogType("INFO");
-        criteria.setBlurry(SecurityUtils.getCurrentUsername());
-        return new ResponseEntity<>(logService.queryAllByUser(criteria,pageable), HttpStatus.OK);
+    public NorResponse queryUserLog(LogQueryParam queryParam,
+                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth == null) throw new ApiException(ResponseCode.UNAUTHORIZED);
+        UserDetails user = (UserDetails) auth.getPrincipal();
+        queryParam.setUsername(user.getUsername());
+        return NorResponse.success(logService.list(queryParam, pageSize, pageNum));
     }
 
-    @GetMapping(value = "/error")
-    @ApiOperation("错误日志查询")
-    @PreAuthorize("@el.check()")
-    public ResponseEntity<Object> queryErrorLog(LogQueryCriteria criteria, Pageable pageable){
-        criteria.setLogType("ERROR");
-        return new ResponseEntity<>(logService.queryAll(criteria,pageable), HttpStatus.OK);
-    }
+    /**
+    @DeleteMapping(value = "/del/logs")
+    @ApiOperation("删除条件日志")
+    public NorResponse<Object> delLog(){
 
-    @GetMapping(value = "/error/{id}")
-    @ApiOperation("日志异常详情查询")
-    @PreAuthorize("@el.check()")
-    public ResponseEntity<Object> queryErrorLogs(@PathVariable Long id){
-        return new ResponseEntity<>(logService.findByErrDetail(id), HttpStatus.OK);
-    }
-    @DeleteMapping(value = "/del/error")
-    @Log("删除所有ERROR日志")
-    @ApiOperation("删除所有ERROR日志")
-    @PreAuthorize("@el.check()")
-    public ResponseEntity<Object> delAllErrorLog(){
-        logService.delAllByError();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @DeleteMapping(value = "/del/info")
-    @Log("删除所有INFO日志")
-    @ApiOperation("删除所有INFO日志")
-    @PreAuthorize("@el.check()")
-    public ResponseEntity<Object> delAllInfoLog(){
-        logService.delAllByInfo();
-        return new ResponseEntity<>(HttpStatus.OK);
     }
     **/
 }
