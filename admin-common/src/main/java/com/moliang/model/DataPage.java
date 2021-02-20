@@ -14,10 +14,12 @@ import java.util.List;
  */
 @Data
 public class DataPage<T> {
+
     /**
      * 当前页码
      */
     private Integer pageNum;
+
     /**
      * 每页数量
      */

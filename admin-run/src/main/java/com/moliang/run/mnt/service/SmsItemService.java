@@ -1,6 +1,7 @@
 package com.moliang.run.mnt.service;
 
 import com.moliang.run.mnt.model.SmsItem;
+import com.moliang.run.mnt.model.SmsItemParam;
 import com.moliang.run.mnt.model.SmsItemQueryParam;
 
 import javax.servlet.http.HttpServletResponse;
@@ -47,10 +48,10 @@ public interface SmsItemService {
      */
     void download(List<SmsItem> res, HttpServletResponse response) throws IOException;
 
-    SmsItem create(SmsItem param, Principal principal);
+    SmsItem create(SmsItemParam param, Principal principal);
 
-    void delete(Set<Long> ids);
+    int delete(Set<Long> ids);
 
-    SmsItem update(SmsItem param, Principal principal);
+    int update(SmsItemParam param, Long id, Principal principal);
 
 }

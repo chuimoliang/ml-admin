@@ -6,10 +6,12 @@ import com.moliang.run.mnt.mapper.SmsItemDao;
 import com.moliang.run.mnt.mapper.SmsItemMapper;
 import com.moliang.run.mnt.model.SmsItem;
 import com.moliang.run.mnt.model.SmsItemExample;
+import com.moliang.run.mnt.model.SmsItemParam;
 import com.moliang.run.mnt.model.SmsItemQueryParam;
 import com.moliang.run.mnt.service.SmsItemService;
 import com.moliang.run.security.component.AdminDetails;
 import com.moliang.utils.FileUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,32 +55,38 @@ public class SmsItemServiceImpl implements SmsItemService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SmsItem create(SmsItem param, Principal principal) {
+    public SmsItem create(SmsItemParam param, Principal principal) {
         verification(param);
-        param.setCreateTime(new Date());
-        param.setCreateBy(principal.getName());
-        itemDao.insertGetId(param);
-        return param;
+        SmsItem item = new SmsItem();
+        BeanUtils.copyProperties(param, item);
+        item.setCreateTime(new Date());
+        item.setCreateBy(principal.getName());
+        itemDao.insertGetId(item);
+        return item;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Set<Long> ids) {
+    public int delete(Set<Long> ids) {
+        int count = 0;
         for(Long id : ids) {
-            itemMapper.deleteByPrimaryKey(id);
+            count += itemMapper.deleteByPrimaryKey(id);
         }
+        return count;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SmsItem update(SmsItem param, Principal principal) {
+    public int update(SmsItemParam param, Long id, Principal principal) {
         verification(param);
-        param.setUpdateBy(principal.getName());
-        itemMapper.updateByPrimaryKey(param);
-        return param;
+        SmsItem item = new SmsItem();
+        BeanUtils.copyProperties(param, item);
+        item.setUpdateBy(principal.getName());
+        item.setId(id);
+        return itemMapper.updateByPrimaryKeySelective(item);
     }
 
-    private void verification(SmsItem item) {
+    private void verification(SmsItemParam item) {
         String home = "/home";
         if(!item.getBackupPath().startsWith(home)) {
             throw new ApiException("只能上传到home目录");

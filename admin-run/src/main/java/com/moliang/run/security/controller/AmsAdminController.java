@@ -61,7 +61,7 @@ public class AmsAdminController {
 
     @ApiOperation(value = "登录以后返回token")
     @PostMapping(value = "/login")
-    public NorResponse login(@Validated @RequestBody AmsAdminLoginParam amsAdminLoginParam) {
+    public NorResponse<Object> login(@Validated @RequestBody AmsAdminLoginParam amsAdminLoginParam) {
         String token = adminService.login(amsAdminLoginParam.getUsername(), amsAdminLoginParam.getPassword());
         if (token == null) {
             return NorResponse.validateFailed("用户名或密码错误");
@@ -74,7 +74,7 @@ public class AmsAdminController {
 
     @ApiOperation(value = "刷新token")
     @GetMapping(value = "/refreshToken")
-    public NorResponse refreshToken(HttpServletRequest request) {
+    public NorResponse<Object> refreshToken(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
         String refreshToken = adminService.refreshToken(token);
         if (refreshToken == null) {
@@ -89,7 +89,7 @@ public class AmsAdminController {
     @Persistence
     @ApiOperation(value = "获取当前登录用户信息")
     @GetMapping(value = "/info")
-    public NorResponse getAdminInfo(Principal principal) {
+    public NorResponse<Object> getAdminInfo(Principal principal) {
         if(principal==null){
             return NorResponse.unauthorized(null);
         }
@@ -126,7 +126,7 @@ public class AmsAdminController {
 
     @ApiOperation("修改指定用户信息")
     @PostMapping(value = "/update/{id}")
-    public NorResponse update(@PathVariable Long id, @RequestBody AmsAdmin admin) {
+    public NorResponse<Object> update(@PathVariable Long id, @RequestBody AmsAdmin admin) {
         int count = adminService.update(id, admin);
         if (count > 0) {
             return NorResponse.success(count);
@@ -136,7 +136,7 @@ public class AmsAdminController {
 
     @ApiOperation("修改指定用户密码")
     @PostMapping(value = "/updatePassword")
-    public NorResponse updatePassword(@Validated @RequestBody AmsUpdateAdminPasswordParam updatePasswordParam) {
+    public NorResponse<Object> updatePassword(@Validated @RequestBody AmsUpdateAdminPasswordParam updatePasswordParam) {
         int status = adminService.updatePassword(updatePasswordParam);
         if (status > 0) {
             return NorResponse.success(status);
@@ -153,7 +153,7 @@ public class AmsAdminController {
 
     @ApiOperation("删除指定用户信息")
     @PostMapping(value = "/delete/{id}")
-    public NorResponse delete(@PathVariable Long id) {
+    public NorResponse<Object> delete(@PathVariable Long id) {
         int count = adminService.delete(id);
         if (count > 0) {
             return NorResponse.success(count);
@@ -163,7 +163,7 @@ public class AmsAdminController {
 
     @ApiOperation("修改帐号状态")
     @PostMapping(value = "/updateStatus/{id}")
-    public NorResponse updateStatus(@PathVariable Long id,@RequestParam(value = "status") Integer status) {
+    public NorResponse<Object> updateStatus(@PathVariable Long id,@RequestParam(value = "status") Integer status) {
         AmsAdmin umsAdmin = new AmsAdmin();
         umsAdmin.setStatus(status);
         int count = adminService.update(id,umsAdmin);
@@ -175,7 +175,7 @@ public class AmsAdminController {
 
     @ApiOperation("给用户分配角色")
     @PostMapping(value = "/role/update")
-    public NorResponse updateRole(@RequestParam("adminId") Long adminId,
+    public NorResponse<Object> updateRole(@RequestParam("adminId") Long adminId,
                                   @RequestParam("roleIds") List<Long> roleIds) {
         int count = adminService.updateRole(adminId, roleIds);
         if (count >= 0) {

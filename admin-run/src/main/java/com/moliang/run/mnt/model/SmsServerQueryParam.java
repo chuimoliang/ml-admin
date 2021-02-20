@@ -6,13 +6,13 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @Use 查询项目参数
+ * @Use
  * @Author Chui moliang
- * @Date 2021/2/20 1:38
+ * @Date 2021/2/21 0:51
  * @Version 1.0
  */
 @Data
-public class SmsItemQueryParam {
+public class SmsServerQueryParam {
 
     @ApiModelProperty("id范围最小值")
     private Long startId;
@@ -20,23 +20,11 @@ public class SmsItemQueryParam {
     @ApiModelProperty("id范围最大值")
     private Long toId;
 
-    @ApiModelProperty("项目名字")
+    @ApiModelProperty("服务器名称")
     private String name;
 
-    @ApiModelProperty("端口范围最小值")
-    private Integer startPort;
-
-    @ApiModelProperty("端口范围最大值")
-    private Integer toPort;
-
-    @ApiModelProperty("上传路径")
-    private String uploadPath;
-
-    @ApiModelProperty("部署路径")
-    private String deployPath;
-
-    @ApiModelProperty("备份路径")
-    private String backupPath;
+    @ApiModelProperty("服务器ip")
+    private String ip;
 
     @ApiModelProperty("创建者")
     private String createBy;
@@ -55,4 +43,5 @@ public class SmsItemQueryParam {
 
     @ApiModelProperty("创建时间范围最大值")
     private Date toCreateTime;
+
 }

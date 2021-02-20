@@ -9,6 +9,68 @@ import java.util.*;
  * @Version 1.0
  */
 public class Solution {
+
+    public int[] getCoprimes(int[] nums, int[][] edges) {
+        int[] tab = new int[nums.length];
+        tab[0] = 0;
+        int num = nums.length;
+        Set<Integer> set = new HashSet<>();
+        set.add(0);
+        ArrayList[] lists = new ArrayList[num];
+        for(int i = 0;i < lists.length;i++) {
+            lists[i] = new ArrayList();
+        }
+        for(int[] t : edges) {
+            lists[t[0]].add(t[1]);
+            lists[t[1]].add(t[0]);
+        }
+        Queue<Integer> q = new LinkedList<>();
+        q.add(0);
+        while(!q.isEmpty() && set.size() < nums.length) {
+            int t = q.poll();
+            List<Integer> l = lists[t];
+            for(int e : l) {
+                if(!set.contains(e)) {
+                    set.add(e);
+                    q.add(e);
+                    tab[e] = t;
+                }
+            }
+        }
+        int[] ans = new int[nums.length];
+        ans[0] = -1;
+        for(int i = 1;i < nums.length;i++) {
+            int index = i;
+            boolean flag = false;
+            while(index != 0) {
+                int parent = tab[index];
+                if(get(nums[i], nums[parent]) == 1) {
+                    ans[i] = parent;
+                    flag = true;
+                    break;
+                }
+                index = parent;
+            }
+            if(!flag) {
+                ans[i] = -1;
+            }
+        }
+        return ans;
+    }
+
+    private int get(int x, int y) {
+        if(x < y) {
+            return getCommonDivisor(y, x);
+        }
+        return getCommonDivisor(x, y);
+    }
+
+    private int getCommonDivisor(int x, int y) {
+        int remain = x % y;
+        if(remain == 0) return y;
+        return getCommonDivisor(y, remain);
+    }
+
     public List<Integer> findSubstring(String s, String[] words) {
         Map<String, Integer> map = new HashMap<>();
         for(String st : words) {
