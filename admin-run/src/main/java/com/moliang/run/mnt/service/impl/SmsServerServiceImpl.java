@@ -1,7 +1,6 @@
 package com.moliang.run.mnt.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.moliang.exception.ApiException;
 import com.moliang.run.mnt.mapper.SmsServerDao;
 import com.moliang.run.mnt.mapper.SmsServerMapper;
 import com.moliang.run.mnt.model.*;
@@ -75,18 +74,23 @@ public class SmsServerServiceImpl implements SmsServerService {
     }
 
     @Override
-    public Boolean testConnect(SmsServer server) {
+    public long testConnect(Long id) {
         ExecuteShellUtil shellUtil = null;
         try {
+            SmsServer server = serverMapper.selectByPrimaryKey(id);
             shellUtil = new ExecuteShellUtil(server.getIp(), server.getAccount(), server.getPassword(), server.getPort());
-            return shellUtil.execute("ls") == 0;
+            long startTime = System.currentTimeMillis();
+            int res = shellUtil.execute("ls");
+            long endTime = System.currentTimeMillis();
+            if(res == 0) return (endTime - startTime) / 2;
         } catch (Exception e) {
-            return false;
+            return -1L;
         } finally {
             if(shellUtil != null) {
                 shellUtil.close();
             }
         }
+        return -1L;
     }
 
     @Override

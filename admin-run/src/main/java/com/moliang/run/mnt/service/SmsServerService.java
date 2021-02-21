@@ -52,10 +52,10 @@ public interface SmsServerService {
 
     /**
      * 测试服务器连接
-     * @param server 服务器
-     * @return 连接结果
+     * @param id 服务器Id
+     * @return 服务器连接延迟
      */
-    Boolean testConnect(SmsServer server);
+    long testConnect(Long id);
 
     SmsServer create(SmsServerParam param, Principal principal);
 

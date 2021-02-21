@@ -84,4 +84,21 @@ public class ExecuteShellUtil {
         }
         return sb.toString();
     }
+
+    public static void main(String[] args) {
+        ExecuteShellUtil shellUtil = null;
+        try {
+            shellUtil = new ExecuteShellUtil("8.136.0.95", "root", "******", 22);
+            long startTime = System.currentTimeMillis();
+            int res = shellUtil.execute("ls");
+            long endTime = System.currentTimeMillis();
+            if(res == 0) System.out.println(endTime / 2 - startTime / 2);
+        } catch (Exception e) {
+            System.out.println("fass");
+        } finally {
+            if(shellUtil != null) {
+                shellUtil.close();
+            }
+        }
+    }
 }

@@ -10,6 +10,28 @@ import java.util.*;
  */
 public class Solution {
 
+    public int longestSubarray(int[] nums, int limit) {
+        PriorityQueue<Integer> min = new PriorityQueue<>();
+        PriorityQueue<Integer> max = new PriorityQueue<>((o1, o2) -> o2 - o1);
+        int l = 0, r = 0, ans = 0;
+        while(r < nums.length) {
+            min.add(nums[r]);
+            max.add(nums[r]);
+            if(max.peek() - min.peek() <= limit) {
+                ans = Math.max(ans, min.size());
+                r++;
+                continue;
+            }
+            while(max.peek() - min.peek() > limit) {
+                min.remove(nums[l]);
+                max.remove(nums[l]);
+                l++;
+            }
+            r++;
+        }
+        return ans;
+    }
+
     public int longestPalindrome(String word1, String word3) {
         StringBuilder b = new StringBuilder();
         for(int i = word3.length() - 1;i >= 0;i--) {
