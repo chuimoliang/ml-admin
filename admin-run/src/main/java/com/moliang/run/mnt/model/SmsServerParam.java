@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @Use 服务器实体类
  * @Author Chui moliang
@@ -14,9 +16,11 @@ import lombok.Data;
 public class SmsServerParam {
 
     @ApiModelProperty("服务器名称")
+    @NotNull
     private String name;
 
     @ApiModelProperty("服务器ip")
+    @NotNull
     private String ip;
 
     @ApiModelProperty("服务器端口")

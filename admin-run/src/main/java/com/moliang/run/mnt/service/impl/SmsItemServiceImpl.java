@@ -150,7 +150,7 @@ public class SmsItemServiceImpl implements SmsItemService {
     @Override
     public void download(List<SmsItem> res, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (SmsItem item : getItemList()) {
+        for (SmsItem item : res) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("应用名称", item.getName());
             map.put("端口", item.getPort());

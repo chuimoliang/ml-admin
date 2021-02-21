@@ -10,6 +10,79 @@ import java.util.*;
  */
 public class Solution {
 
+    public int longestPalindrome(String word1, String word3) {
+        StringBuilder b = new StringBuilder();
+        for(int i = word3.length() - 1;i >= 0;i--) {
+            b.append(word3.charAt(i));
+        }
+        String word2 = new String(b);
+        int[][] tab = new int[word1.length()][word2.length()];
+        for(int[] t : tab) Arrays.fill(t, -1);
+        int ans = 0;
+
+        for(int i = 0;i < word1.length();i++) {
+            for(int j = 0;j < word2.length();j++) {
+                if(word1.charAt(i) != word2.charAt(j)) {
+                    tab[i][j] = -1;
+                }
+                else {
+                    if(i - 1 >= 0 && j - 1 >= 0)
+                    tab[i][j] = 1 + tab[i - 1][j - 1];
+                    else tab[i][j] = 1;
+                    ans = Math.max(ans, tab[i][j]);
+                }
+            }
+        }
+        if(ans == 0) return 0;
+        if(ans < word1.length() || ans < word2.length()) return 2 * ans + 1;
+        return 2 * ans;
+    }
+
+    Map<String, Integer> map = new HashMap<>();
+    public int maximumScore(int[] nums, int[] multipliers) {
+        int l = 0, r = nums.length - 1, index = 0, sum = 0;
+        return maximumScore(nums, multipliers, l, r, index, sum);
+    }
+
+    public int maximumScore(int[] nums, int[] multipliers, int l, int r, int index, int sum) {
+        if(index == multipliers.length) return sum;
+        String s = l +"|" + r +"|"+ index;
+        if(map.containsKey(s)) return map.get(s) + sum;
+        int ans =  Math.max(maximumScore(nums, multipliers, l + 1, r, index + 1, multipliers[index] * nums[l]),
+                maximumScore(nums, multipliers, l, r - 1, index + 1, multipliers[index] * nums[r]));
+        map.put(s, ans);
+        return ans + sum;
+    }
+
+    /**
+    public int maximumScore(int[] nums, int[] multipliers) {
+        int l = 0, r = nums.length - 1, index = 0, sum = 0;
+        while(index < multipliers.length) {
+            if(index < multipliers.length - 1 && multipliers[index] < multipliers[index + 1]) {
+                if(nums[l] < nums[r]) {
+                    sum += nums[l] * multipliers[index];
+                    l++;
+                } else {
+                    sum += nums[r] * multipliers[index];
+                    r--;
+                }
+            } else {
+                if(nums[l] < nums[r]) {
+                    sum += nums[r] * multipliers[index];
+                    r--;
+                } else {
+                    sum += nums[l] * multipliers[index];
+                    l++;
+                }
+            }
+            index++;
+        }
+        return sum;
+    }
+     **/
+
+
+
     public int[] getCoprimes(int[] nums, int[][] edges) {
         int[] tab = new int[nums.length];
         tab[0] = 0;

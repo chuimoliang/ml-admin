@@ -1,12 +1,14 @@
 package com.moliang.run.mnt.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.moliang.exception.ApiException;
+import com.moliang.run.mnt.mapper.SmsServerDao;
 import com.moliang.run.mnt.mapper.SmsServerMapper;
-import com.moliang.run.mnt.model.SmsServer;
-import com.moliang.run.mnt.model.SmsServerExample;
-import com.moliang.run.mnt.model.SmsServerParam;
-import com.moliang.run.mnt.model.SmsServerQueryParam;
+import com.moliang.run.mnt.model.*;
 import com.moliang.run.mnt.service.SmsServerService;
+import com.moliang.utils.ExecuteShellUtil;
+import com.moliang.utils.FileUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Use 服务器管理实现类
@@ -28,6 +29,8 @@ public class SmsServerServiceImpl implements SmsServerService {
 
     @Autowired
     private SmsServerMapper serverMapper;
+    @Autowired
+    private SmsServerDao serverDao;
 
     @Override
     public List<SmsServer> getServerList() {
@@ -47,27 +50,54 @@ public class SmsServerServiceImpl implements SmsServerService {
 
     @Override
     public SmsServer getById(Long id) {
-        return null;
+        return serverMapper.selectByPrimaryKey(id);
     }
 
     @Override
     public SmsServer getByIp(String ip) {
-        return null;
+        return serverDao.getByIp(ip);
     }
 
     @Override
     public void download(List<SmsServer> res, HttpServletResponse response) throws IOException {
-
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (SmsServer server : res) {
+            Map<String,Object> map = new LinkedHashMap<>();
+            map.put("服务器名称", server.getName());
+            map.put("IP", server.getIp());
+            map.put("端口", server.getPort());
+            map.put("服务器账号", server.getAccount());
+            map.put("密码", server.getPassword());
+            map.put("创建日期", server.getCreateTime());
+            list.add(map);
+        }
+        FileUtil.downloadExcel(list, response);
     }
 
     @Override
     public Boolean testConnect(SmsServer server) {
-        return null;
+        ExecuteShellUtil shellUtil = null;
+        try {
+            shellUtil = new ExecuteShellUtil(server.getIp(), server.getAccount(), server.getPassword(), server.getPort());
+            return shellUtil.execute("ls") == 0;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if(shellUtil != null) {
+                shellUtil.close();
+            }
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public SmsServer create(SmsServerParam param, Principal principal) {
+        SmsServer server = new SmsServer();
+        BeanUtils.copyProperties(param, server);
+        server.setCreateBy(principal.getName());
+        server.setCreateTime(new Date());
+        int count = serverDao.insertGetId(server);
+        if(count > 0) return server;
         return null;
     }
 
@@ -83,8 +113,12 @@ public class SmsServerServiceImpl implements SmsServerService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SmsServer update(SmsServerParam param, Long id, Principal principal) {
-        return null;
+    public int update(SmsServerParam param, Long id, Principal principal) {
+        SmsServer server = new SmsServer();
+        BeanUtils.copyProperties(param, server);
+        server.setUpdateBy(principal.getName());
+        server.setId(id);
+        return serverMapper.updateByPrimaryKeySelective(server);
     }
 
     private SmsServerExample getExample(SmsServerQueryParam param) {

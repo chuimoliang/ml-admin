@@ -61,5 +61,5 @@ public interface SmsServerService {
 
     int delete(Set<Long> ids);
 
-    SmsServer update(SmsServerParam param, Long id, Principal principal);
+    int update(SmsServerParam param, Long id, Principal principal);
 }
