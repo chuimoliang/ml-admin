@@ -33,6 +33,8 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 数据库表名及对应的 Java 模型类名 -->
-        <table tableName="sms_server" domainObjectName="SmsServer"/>
+        <table tableName="sms_deploy" domainObjectName="SmsDeploy"/>
+        <table tableName="sms_item_deploy_relation" domainObjectName="SmsItemDeployRelation"/>
+        <table tableName="sms_server_deploy_relation" domainObjectName="SmsServerDeployRelation"/>
     </context>
 </generatorConfiguration>

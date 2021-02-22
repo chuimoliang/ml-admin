@@ -10,6 +10,37 @@ import java.util.*;
  */
 public class Solution {
 
+    Set<Integer> col = new HashSet<>();
+    Set<Integer> dif = new HashSet<>();
+    Set<Integer> sum = new HashSet<>();
+    List<List<String>> ans = new ArrayList<>();
+    public List<List<String>> solveNQueens(int n) {
+        find(0, n, new int[n]);
+        return ans;
+    }
+
+    public void find(int index, int n, int[] res) {
+        if(index == n) {
+            List<String> t = new ArrayList<>(n);
+            char[] chars = new char[n];
+            for(int i = 0;i < n;i++) chars[i] = '.';
+            for(int e : res) {
+                chars[e] = 'Q';
+                t.add(String.valueOf(chars));
+                chars[e] = '.';
+            }
+            ans.add(t);
+            return;
+        }
+        for(int i = 0;i < n;i++) {
+            if(col.contains(i) || dif.contains(index - i) || sum.contains(index + i)) continue;
+            col.add(i); dif.add(index - i); sum.add(index + i);
+            res[index] = i;
+            find(index + 1, n, res);
+            col.remove(i); dif.remove(index - i); sum.remove(index + i);
+        }
+    }
+
     public int longestSubarray(int[] nums, int limit) {
         PriorityQueue<Integer> min = new PriorityQueue<>();
         PriorityQueue<Integer> max = new PriorityQueue<>((o1, o2) -> o2 - o1);
