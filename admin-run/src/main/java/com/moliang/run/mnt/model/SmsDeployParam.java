@@ -16,9 +16,12 @@ public class SmsDeployParam {
 
     @NotNull
     @ApiModelProperty("应用编号")
-    private String appId;
+    private Long itemId;
 
     @NotNull
     @ApiModelProperty("服务器编号")
-    private String serverId;
+    private Long serverId;
+
+    @ApiModelProperty("备注")
+    private String description;
 }

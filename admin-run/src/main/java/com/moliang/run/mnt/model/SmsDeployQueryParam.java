@@ -19,11 +19,13 @@ public class SmsDeployQueryParam {
     @ApiModelProperty("最大编号")
     private Long toId;
 
+    @ApiModelProperty("项目起始编号")
+    private Long startItemId;
+    @ApiModelProperty("项目最大编号")
+    private Long toItemId;
+
     @ApiModelProperty("项目名称")
     private String itemName;
-
-    @ApiModelProperty("服务器名称")
-    private String serverIp;
 
     @ApiModelProperty("部署状态")
     private String status;

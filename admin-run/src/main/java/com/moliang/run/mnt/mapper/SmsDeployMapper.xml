@@ -3,9 +3,11 @@
 <mapper namespace="com.moliang.run.mnt.mapper.SmsDeployMapper">
   <resultMap id="BaseResultMap" type="com.moliang.run.mnt.model.SmsDeploy">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="item_id" jdbcType="BIGINT" property="itemId" />
     <result column="item_name" jdbcType="VARCHAR" property="itemName" />
     <result column="server_ip" jdbcType="VARCHAR" property="serverIp" />
     <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -70,7 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, item_name, server_ip, status, create_time, create_by, update_time, update_by
+    id, item_id, item_name, server_ip, status, description, create_time, create_by, update_time, 
+    update_by
   </sql>
   <select id="selectByExample" parameterType="com.moliang.run.mnt.model.SmsDeployExample" resultMap="BaseResultMap">
     select
@@ -103,18 +106,23 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.moliang.run.mnt.model.SmsDeploy">
-    insert into sms_deploy (id, item_name, server_ip, 
-      status, create_time, create_by, 
-      update_time, update_by)
-    values (#{id,jdbcType=BIGINT}, #{itemName,jdbcType=VARCHAR}, #{serverIp,jdbcType=VARCHAR}, 
-      #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+    insert into sms_deploy (id, item_id, item_name, 
+      server_ip, status, description, 
+      create_time, create_by, update_time, 
+      update_by)
+    values (#{id,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{itemName,jdbcType=VARCHAR}, 
+      #{serverIp,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.moliang.run.mnt.model.SmsDeploy">
     insert into sms_deploy
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
+      </if>
+      <if test="itemId != null">
+        item_id,
       </if>
       <if test="itemName != null">
         item_name,
@@ -124,6 +132,9 @@
       </if>
       <if test="status != null">
         status,
+      </if>
+      <if test="description != null">
+        description,
       </if>
       <if test="createTime != null">
         create_time,
@@ -142,6 +153,9 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=BIGINT},
+      </if>
       <if test="itemName != null">
         #{itemName,jdbcType=VARCHAR},
       </if>
@@ -150,6 +164,9 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -177,6 +194,9 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.itemId != null">
+        item_id = #{record.itemId,jdbcType=BIGINT},
+      </if>
       <if test="record.itemName != null">
         item_name = #{record.itemName,jdbcType=VARCHAR},
       </if>
@@ -185,6 +205,9 @@
       </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -206,9 +229,11 @@
   <update id="updateByExample" parameterType="map">
     update sms_deploy
     set id = #{record.id,jdbcType=BIGINT},
+      item_id = #{record.itemId,jdbcType=BIGINT},
       item_name = #{record.itemName,jdbcType=VARCHAR},
       server_ip = #{record.serverIp,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -220,6 +245,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.moliang.run.mnt.model.SmsDeploy">
     update sms_deploy
     <set>
+      <if test="itemId != null">
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
       <if test="itemName != null">
         item_name = #{itemName,jdbcType=VARCHAR},
       </if>
@@ -228,6 +256,9 @@
       </if>
       <if test="status != null">
         status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -246,9 +277,11 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.moliang.run.mnt.model.SmsDeploy">
     update sms_deploy
-    set item_name = #{itemName,jdbcType=VARCHAR},
+    set item_id = #{itemId,jdbcType=BIGINT},
+      item_name = #{itemName,jdbcType=VARCHAR},
       server_ip = #{serverIp,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},

@@ -5,11 +5,15 @@ import java.util.Date;
 public class SmsDeploy {
     private Long id;
 
+    private Long itemId;
+
     private String itemName;
 
     private String serverIp;
 
     private String status;
+
+    private String description;
 
     private Date createTime;
 
@@ -25,6 +29,14 @@ public class SmsDeploy {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     public String getItemName() {
@@ -49,6 +61,14 @@ public class SmsDeploy {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getCreateTime() {

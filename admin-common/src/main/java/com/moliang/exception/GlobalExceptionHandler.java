@@ -37,8 +37,10 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = ApiException.class)
-    public NorResponse handle(ApiException e) {
+    public NorResponse<Object> handle(ApiException e) {
         if (e.getErrorCode() != null) {
+            if(e.getMessage() != null && !"".equals(e.getMessage()))
+            return NorResponse.failed(e.getErrorCode(), e.getMessage());
             return NorResponse.failed(e.getErrorCode());
         }
         return NorResponse.failed(e.getMessage());

@@ -55,20 +55,21 @@ public interface SmsDeployService {
      * @param principal \
      * @return
      */
-    SmsDeploy update(SmsDeployParam param, Principal principal);
+    SmsDeploy update(SmsDeployParam param, Long id, Principal principal);
 
     /**
      * 删除部署
-     * @param id 删除编号
+     * @param ids 删除编号
      * @return \
      */
     int delete(Set<Long> ids);
 
     /**
      * 查询部署状态
+     * @param id 编号
      * @return \
      */
-    int serverStatus();
+    int serverStatus(Long id);
 
     /**
      * 启动服务
