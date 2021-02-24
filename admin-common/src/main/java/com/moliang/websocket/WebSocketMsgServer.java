@@ -28,6 +28,9 @@ public class WebSocketMsgServer {
 
     private String sid = "";
 
+    /**
+     * 连接建立成功调用的方法
+     */
     @OnOpen
     public void onOpen(Session session,@PathParam("sid") String sid) {
         this.session = session;
@@ -80,7 +83,7 @@ public class WebSocketMsgServer {
     public static void sendInfo(SocketMsg socketMsg,@PathParam("sid") String sid) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String message = mapper.writeValueAsString(socketMsg);
-        log.info("推送消息到"+sid+"，推送内容:"+message);
+        log.info("推送消息到" + sid + "，推送内容:" + message);
         for (WebSocketMsgServer item : servers) {
             try {
                 //这里可以设定只推送给这个sid的，为null则全部推送

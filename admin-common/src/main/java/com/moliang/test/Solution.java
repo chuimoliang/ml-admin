@@ -10,6 +10,57 @@ import java.util.*;
  */
 public class Solution {
 
+    int[][] intervals;
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        if(intervals.length == 0) {
+            int[][] res = new int[1][];
+            res[0] = newInterval;
+            return res;
+        }
+        this.intervals = intervals;
+        int l = getIndex(newInterval[0], 0, intervals.length);
+        int r = getIndex(newInterval[1], 0, intervals.length);
+        if(l == r && (newInterval[0] > intervals[l][1] || newInterval[1] < intervals[l][0])) {
+            List<int[]> ans = new ArrayList<>();
+            for(int i = 0;i < l;i++) ans.add(intervals[i]);
+            if(newInterval[0] < intervals[l][0]) {
+                ans.add(newInterval);
+                ans.add(intervals[l]);
+            } else {
+                ans.add(intervals[l]);
+                ans.add(newInterval);
+            }
+            return getInts(intervals, r, ans);
+        } else {
+            int min = Math.min(intervals[l][0], newInterval[0]);
+            int max = Math.max(intervals[r][1], newInterval[1]);
+            List<int[]> ans = new ArrayList<>();
+            for(int i = 0;i < l;i++) ans.add(intervals[i]);
+            ans.add(new int[]{min, max});
+            return getInts(intervals, r, ans);
+        }
+    }
+
+    private int[][] getInts(int[][] intervals, int r, List<int[]> ans) {
+        for(int i = r + 1;i < intervals.length;i++) ans.add(intervals[i]);
+        int[][] res = new int[ans.size()][2];
+        for(int i = 0;i < ans.size();i++) res[i] = ans.get(i);
+        return res;
+    }
+
+    public int getIndex(int num, int l, int r) {
+        if(l < r) {
+            int mid = (l + r) / 2;
+            if(intervals[mid][0] > num) return getIndex(num, l, mid - 1);
+            if(intervals[mid][1] < num) return getIndex(num,  mid + 1, r);
+            return mid;
+        } else if(l == r) {
+            if(intervals[l][0] > num) return l - 1;
+            if(intervals[l][1] < num) return l + 1;
+        }
+        return l;
+    }
+
     Set<Integer> col = new HashSet<>();
     Set<Integer> dif = new HashSet<>();
     Set<Integer> sum = new HashSet<>();

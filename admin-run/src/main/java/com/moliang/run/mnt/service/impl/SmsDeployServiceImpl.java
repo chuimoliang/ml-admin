@@ -6,7 +6,11 @@ import com.moliang.exception.ApiException;
 import com.moliang.run.mnt.mapper.*;
 import com.moliang.run.mnt.model.*;
 import com.moliang.run.mnt.service.SmsDeployService;
+import com.moliang.utils.ExecuteShellUtil;
 import com.moliang.utils.FileUtil;
+import com.moliang.websocket.MsgType;
+import com.moliang.websocket.SocketMsg;
+import com.moliang.websocket.WebSocketMsgServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,9 +42,30 @@ public class SmsDeployServiceImpl implements SmsDeployService {
     @Autowired
     private SmsServerDeployRelationDao serverDeployRelationDao;
 
+    private void stopItem(int port, ExecuteShellUtil shellUtil) {
+        shellUtil.execute(String.format("lsof -i :%d|grep -v \"PID\"|awk '{print \"kill -9\",$2}'|sh", port));
+    }
+
+
     @Override
     public int serverStatus(Long id) {
-        return 0;
+        SmsDeploy deploy = deployMapper.selectByPrimaryKey(id);
+        if(deploy == null) return -1;
+        List<SmsServer> servers = serverDeployRelationDao.getServersByDeployId(id);
+        SmsItem item = itemMapper.selectByPrimaryKey(deploy.getItemId());
+        if(servers.size() == 0 || item == null) return -1;
+        int count = 0;
+        for(SmsServer server : servers) {
+            ExecuteShellUtil shell =
+                    new ExecuteShellUtil(server.getIp(), server.getAccount(), server.getPassword(), server.getPort());
+            if(isRunning(item.getPort(), shell)) count++;
+        }
+        return count;
+    }
+
+    private boolean isRunning(int port, ExecuteShellUtil shell) {
+        String res = shell.executeForResult(String.format("fuser -n tcp %d", port));
+        return res.indexOf("/tcp:") > 0;
     }
 
     @Override
@@ -50,15 +75,85 @@ public class SmsDeployServiceImpl implements SmsDeployService {
         List<SmsServer> servers = serverDeployRelationDao.getServersByDeployId(id);
         SmsItem item = itemMapper.selectByPrimaryKey(deploy.getItemId());
         if(servers.size() == 0 || item == null) return -1;
+        int count = 0;
         for(SmsServer server : servers) {
-
+            StringBuilder sb = new StringBuilder();
+            ExecuteShellUtil shell =
+                    new ExecuteShellUtil(server.getIp(), server.getAccount(), server.getPassword(), server.getPort());
+            stopItem(item.getPort(), shell);
+            sb.append("服务器:").append(server.getName()).append("<br>应用:").append(item.getName());
+            sendMsg("下发启动命令", MsgType.INFO);
+            shell.execute(item.getStartScript());
+            sleep(3);
+            sendMsg("应用启动中, 请耐心等待结果, 或者稍后手动查看运行状态", MsgType.INFO);
+            int i = 0;
+            boolean res = false;
+            while(i++ < 30) {
+                res = isRunning(item.getPort(), shell);
+                if(res) {
+                    break;
+                }
+                sleep(6);
+            }
+            if(res) {
+                sb.append("<br>启动成功!");
+                sendMsg(sb.toString(), MsgType.INFO);
+                count++;
+            } else {
+                sb.append("启动失败");
+                sendMsg(sb.toString(), MsgType.ERROR);
+            }
+            log.info(sb.toString());
+            shell.close();
         }
-        return 0;
+        return count;
+    }
+
+    private void sleep(int second) {
+        try {
+            Thread.sleep(second * 1000L);
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void sendMsg(String msg, MsgType type) {
+        try {
+            WebSocketMsgServer.sendInfo(new SocketMsg(msg, type), "deploy");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 
     @Override
     public int stop(Long id) {
-        return 0;
+        SmsDeploy deploy = deployMapper.selectByPrimaryKey(id);
+        if(deploy == null) return -1;
+        List<SmsServer> servers = serverDeployRelationDao.getServersByDeployId(id);
+        SmsItem item = itemMapper.selectByPrimaryKey(deploy.getItemId());
+        if(servers.size() == 0 || item == null) return -1;
+        int count = 0;
+        for(SmsServer server : servers) {
+            StringBuilder sb = new StringBuilder();
+            ExecuteShellUtil shell =
+                    new ExecuteShellUtil(server.getIp(), server.getAccount(), server.getPassword(), server.getPort());
+            stopItem(item.getPort(), shell);
+            sb.append("服务器:").append(server.getName()).append("<br>应用:").append(item.getName());
+            sendMsg("下发停止命令", MsgType.INFO);
+            sleep(1);
+            boolean res = isRunning(item.getPort(), shell);
+            if(!res) {
+                sb.append("<br>关闭成功!");
+                sendMsg(sb.toString(), MsgType.INFO);
+                count++;
+            } else {
+                sb.append("<br>关闭失败");
+                sendMsg(sb.toString(), MsgType.ERROR);
+            }
+            log.info(sb.toString());
+            shell.close();
+        }
+        return count;
     }
 
     @Override
