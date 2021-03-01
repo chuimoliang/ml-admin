@@ -1,6 +1,7 @@
 package com.moliang.model;
 
 import com.moliang.enums.ResponseCode;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @Use 通用响应
@@ -9,17 +10,14 @@ import com.moliang.enums.ResponseCode;
  * @Version 1.0
  */
 public class NorResponse<T> {
-    /**
-     * 状态码
-     */
+
+    @ApiModelProperty("状态码")
     private long code;
-    /**
-     * 提示信息
-     */
+
+    @ApiModelProperty("提示信息")
     private String message;
-    /**
-     * 数据封装
-     */
+
+    @ApiModelProperty("数据封装")
     private T data;
 
     protected NorResponse() {

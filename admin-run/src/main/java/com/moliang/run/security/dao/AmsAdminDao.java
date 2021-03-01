@@ -1,5 +1,7 @@
 package com.moliang.run.security.dao;
 
+import com.moliang.run.model.AmsAdmin;
+import com.moliang.run.model.AmsAdminExample;
 import com.moliang.run.model.AmsMenu;
 import com.moliang.run.model.AmsRole;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,6 +18,14 @@ import java.util.List;
  */
 @Mapper
 public interface AmsAdminDao {
+
+    /**
+     * 获取用户列表
+     * 重写登录日志部分后改写select
+     * @param example 查询逻辑
+     * @return 用户列表
+     */
+    List<AmsAdmin> selectByExample(AmsAdminExample example);
     /**
      * 获取用户的菜单列表
      */

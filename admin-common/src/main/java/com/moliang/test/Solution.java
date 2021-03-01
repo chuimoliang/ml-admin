@@ -1,5 +1,7 @@
 package com.moliang.test;
 
+import com.alibaba.druid.support.ibatis.SqlMapClientImplWrapper;
+
 import java.util.*;
 
 /**
@@ -9,6 +11,78 @@ import java.util.*;
  * @Version 1.0
  */
 public class Solution {
+
+    public int longestSubstring(String s, int k) {
+        if(s.length() < k) return 0;
+        int[] nums = new int[26];
+        for(int i = 0;i < s.length();i++) {
+            nums[s.charAt(i) - 'a']++;
+        }
+        boolean f = true;
+        for(int e : nums) {
+            if(e < k && e != 0) {f = false; break;}
+        }
+        if(f) return s.length();
+        int index = 0, ans = 0;
+        while(index < s.length()) {
+            if(nums[s.charAt(index) - 'a'] < k) {index++; continue;}
+            int l = index;
+            Set<Integer> set = new HashSet<>();
+            while(index < s.length() && (set.contains(s.charAt(index) - 'a') || nums[s.charAt(index) - 'a'] >= k)) {
+                set.add(s.charAt(index) - 'a');
+                nums[s.charAt(index) - 'a']--;
+                index++;
+            }
+            ans = Math.max(ans, longestSubstring(s.substring(l, index), k));
+        }
+        /**
+         int index = 0, ans = 0;
+         while(index < s.length()) {
+         if(nums[s.charAt(index) - 'a'] < k) {nums[s.charAt(index) - 'a']--; index++; continue;}
+         int l = index;
+         Set<Integer> set = new HashSet<>();
+         while(index < s.length() &&(set.contains(s.charAt(index) - 'a') || nums[s.charAt(index) - 'a'] >= k)) {
+         set.add(s.charAt(index) - 'a');
+         nums[s.charAt(index) - 'a']--;
+         index++;
+         }
+         ans = Math.max(ans, index - l);
+         }
+         **/
+        return ans;
+    }
+
+    public List<Integer> findNumOfValidWords(String[] words, String[] puzzles) {
+        int[] ans = new int[puzzles.length];
+        Map<Integer, Integer> map = new HashMap<>();
+        for(String s : words) {
+            int res = 0;
+            for(int i = 0;i < s.length();i++) {
+                int t = 1 << (s.charAt(i) - 'a');
+                if((res & t) != t) res += t;
+            }
+            map.put(res, map.getOrDefault(res, 0) + 1);
+        }
+        for(int index = 0;index < puzzles.length;index++) {
+            int th = 0;
+            String s = puzzles[index];
+            for(int i = 0;i < s.length();i++) {
+                int t = 1 << (s.charAt(i) - 'a');
+                if((th & t) != t) th += t;
+            }
+            int res = 0;
+            int key = 1 << (s.charAt(0) - 'a');
+            th -= key;
+            for(int e = th;e > 0;e = (e - 1) & th) {
+                e += key;
+                res += map.getOrDefault(e, 0);
+            }
+            ans[index] = res;
+        }
+        return new ArrayList<>(){{
+            for(int e : ans) add(e);
+        }};
+    }
 
     int[][] intervals;
     public int[][] insert(int[][] intervals, int[] newInterval) {

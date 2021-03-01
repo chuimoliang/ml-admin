@@ -9,12 +9,9 @@ import com.moliang.run.mnt.model.SmsItemExample;
 import com.moliang.run.mnt.model.SmsItemParam;
 import com.moliang.run.mnt.model.SmsItemQueryParam;
 import com.moliang.run.mnt.service.SmsItemService;
-import com.moliang.run.security.component.AdminDetails;
-import com.moliang.utils.FileUtil;
+import com.moliang.utils.FileUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +38,20 @@ public class SmsItemServiceImpl implements SmsItemService {
     public List<SmsItem> getItemList() {
         return itemMapper.selectByExample(new SmsItemExample());
     }
+
+    /**
+    @Override
+    public String upload(MultipartFile file, Long id) throws IOException {
+        SmsItem item = itemMapper.selectByPrimaryKey(id);
+        if(item == null || file == null) {
+            throw new ApiException(ResponseCode.VALIDATE_FAILED);
+        }
+        File itemFile = new File(item.getUploadPath() + "/" + item.getName());
+        cn.hutool.core.io.FileUtil.del(itemFile);
+        file.transferTo(itemFile);
+        return itemFile.getName();
+    }
+     **/
 
     @Override
     public List<SmsItem> getItemList(SmsItemQueryParam param) {
@@ -127,7 +138,7 @@ public class SmsItemServiceImpl implements SmsItemService {
             criteria.andPortLessThanOrEqualTo(param.getToPort());
         }
         if (param.getName() != null && !"".equals(param.getName())) {
-            criteria.andNameEqualTo(param.getName());
+            criteria.andNameLike("%" + param.getName() + "%");
         }
         if (param.getUploadPath() != null && !"".equals(param.getUploadPath())) {
             criteria.andUploadPathEqualTo(param.getUploadPath());
@@ -162,6 +173,6 @@ public class SmsItemServiceImpl implements SmsItemService {
             map.put("创建日期", item.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        FileUtils.downloadExcel(list, response);
     }
 }

@@ -3,6 +3,7 @@ package com.moliang.run.mnt.service;
 import com.moliang.run.mnt.model.SmsItem;
 import com.moliang.run.mnt.model.SmsItemParam;
 import com.moliang.run.mnt.model.SmsItemQueryParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

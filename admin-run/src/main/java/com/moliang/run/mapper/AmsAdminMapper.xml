@@ -79,8 +79,13 @@
     <if test="distinct">
       distinct
     </if>
-    <include refid="Base_Column_List" />
-    from ams_admin
+    ad.id AS id, username, `password`, icon, email, nick_name, note,create_time, r.login_time AS login_time, `status`
+    FROM ams_admin ad LEFT JOIN (
+    SELECT a.id, MAX(al.create_time) AS login_time
+    FROM ams_admin a LEFT JOIN ams_admin_login_log al ON a.id = al.admin_id
+    GROUP BY a.id
+    ) AS r
+    ON ad.id = r.id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

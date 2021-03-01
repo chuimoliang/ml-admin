@@ -1,5 +1,6 @@
 package com.moliang.run.mnt.controller;
 
+import com.moliang.enums.ResponseCode;
 import com.moliang.model.NorResponse;
 import com.moliang.run.mnt.model.SmsDeploy;
 import com.moliang.run.mnt.model.SmsDeployParam;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -30,6 +32,12 @@ public class SmsDeployController {
 
     @Autowired
     private SmsDeployService deployService;
+
+    @ApiOperation("上传应用")
+    @PutMapping("/upload/{id}")
+    public NorResponse<Object> upload(@RequestBody MultipartFile file, @PathVariable Long id) throws IOException {
+        return NorResponse.success(deployService.upload(file, id));
+    }
 
     @ApiOperation("分页查询部署")
     @GetMapping
@@ -62,6 +70,32 @@ public class SmsDeployController {
             return NorResponse.success(count);
         }
         return NorResponse.failed();
+    }
+
+    @ApiOperation("启动部署")
+    @PostMapping("/start/{id}")
+    public NorResponse<Object> start(@PathVariable Long id) {
+        int count = deployService.start(id);
+        if(count == -1) {
+            return NorResponse.failed(ResponseCode.VALIDATE_FAILED, "部署过期或不存在");
+        }
+        if(count > 0) {
+            return NorResponse.success(count);
+        }
+        return NorResponse.failed("启动数量为0, 请检查服务器设置");
+    }
+
+    @ApiOperation("停止部署")
+    @PostMapping("/stop/{id}")
+    public NorResponse<Object> stop(@PathVariable Long id) {
+        int count = deployService.stop(id);
+        if(count == -1) {
+            return NorResponse.failed(ResponseCode.VALIDATE_FAILED, "部署过期或不存在");
+        }
+        if(count > 0) {
+            return NorResponse.success(count);
+        }
+        return NorResponse.failed("停止服务数量为0, 请检查服务器设置");
     }
 
     @ApiOperation("导出部署数据")

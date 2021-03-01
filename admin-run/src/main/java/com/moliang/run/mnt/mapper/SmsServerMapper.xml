@@ -74,12 +74,15 @@
   <sql id="Base_Column_List">
     id, name, ip, port, account, password, create_by, update_by, create_time, update_time
   </sql>
+  <sql id="Query_Column_List">
+    id, name, ip, port, account, create_by, update_by, create_time, update_time
+  </sql>
   <select id="selectByExample" parameterType="com.moliang.run.mnt.model.SmsServerExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
-    <include refid="Base_Column_List" />
+    <include refid="Query_Column_List" />
     from sms_server
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />

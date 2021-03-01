@@ -3,6 +3,7 @@ package com.moliang.run.mnt.service;
 import com.moliang.run.mnt.model.SmsDeploy;
 import com.moliang.run.mnt.model.SmsDeployParam;
 import com.moliang.run.mnt.model.SmsDeployQueryParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -17,6 +18,15 @@ import java.util.Set;
  * @Version 1.0
  */
 public interface SmsDeployService {
+
+    /**
+     * 上传部署应用文件
+     * @param file 文件
+     * @param id 部署编号
+     * @return count
+     * @throws IOException \
+     */
+    int upload(MultipartFile file, Long id) throws IOException;
 
     /**
      * 部署分页查询
@@ -74,14 +84,14 @@ public interface SmsDeployService {
     /**
      * 启动服务
      * @param id \
-     * @return \
+     * @return 成功启动的服务器数量
      */
     int start(Long id);
 
     /**
      * 停止服务
      * @param id \
-     * @return \
+     * @return 停止服务数量
      */
     int stop(Long id);
 

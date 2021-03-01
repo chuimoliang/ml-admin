@@ -2,6 +2,7 @@ package com.moliang.run.mnt.controller;
 
 import com.moliang.enums.ResponseCode;
 import com.moliang.exception.ApiException;
+import com.moliang.model.DataPage;
 import com.moliang.model.NorResponse;
 import com.moliang.run.mnt.model.SmsServerParam;
 import com.moliang.run.mnt.model.SmsServerQueryParam;
@@ -71,7 +72,7 @@ public class SmsServerController {
     public NorResponse<Object> serverList(SmsServerQueryParam param,
                                           @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        return NorResponse.success(serverService.getServerList(param, pageSize, pageNum));
+        return NorResponse.success(DataPage.restPage(serverService.getServerList(param, pageSize, pageNum)));
     }
 
     @ApiOperation("下载服务器数据")

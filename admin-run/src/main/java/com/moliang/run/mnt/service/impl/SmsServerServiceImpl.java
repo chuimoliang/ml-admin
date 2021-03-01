@@ -6,7 +6,7 @@ import com.moliang.run.mnt.mapper.SmsServerMapper;
 import com.moliang.run.mnt.model.*;
 import com.moliang.run.mnt.service.SmsServerService;
 import com.moliang.utils.ExecuteShellUtil;
-import com.moliang.utils.FileUtil;
+import com.moliang.utils.FileUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +70,7 @@ public class SmsServerServiceImpl implements SmsServerService {
             map.put("创建日期", server.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        FileUtils.downloadExcel(list, response);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class SmsServerServiceImpl implements SmsServerService {
             criteria.andUpdateTimeLessThanOrEqualTo(param.getToUpdateTime());
         }
         if (param.getName() != null && !"".equals(param.getName())) {
-            criteria.andNameEqualTo(param.getName());
+            criteria.andNameLike("%" + param.getName() + "%");
         }
         if (param.getCreateBy() != null && !"".equals(param.getCreateBy())) {
             criteria.andCreateByEqualTo(param.getCreateBy());

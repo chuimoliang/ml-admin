@@ -1,16 +1,14 @@
 package com.moliang.run.log.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.moliang.run.log.model.LogQueryParam;
 import com.moliang.run.log.model.WebLog;
 import com.moliang.run.log.model.WebLogExample;
 import com.moliang.run.log.service.WebLogService;
 import com.moliang.run.mapper.WebLogMapper;
-import com.moliang.utils.FileUtil;
+import com.moliang.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,7 +110,7 @@ public class WebLogServiceImpl implements WebLogService {
             map.put("创建日期", log.getCreateTime());
             list.add(map);
         }
-        FileUtil.downloadExcel(list, response);
+        FileUtils.downloadExcel(list, response);
     }
 
     @Override

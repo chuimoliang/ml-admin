@@ -1,5 +1,6 @@
 package com.moliang.run.mnt.controller;
 
+import cn.hutool.core.io.FileUtil;
 import com.moliang.model.DataPage;
 import com.moliang.model.NorResponse;
 import com.moliang.run.mnt.model.SmsItem;
@@ -11,8 +12,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Set;
@@ -46,6 +50,7 @@ public class SmsItemController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation("更新应用")
     public NorResponse<Object> update(@Validated @RequestBody SmsItemParam param, @PathVariable Long id, Principal principal) {
         int count = itemService.update(param, id, principal);
         if(count > 0) {

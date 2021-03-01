@@ -223,7 +223,7 @@ public class AmsAdminServiceImpl implements AmsAdminService {
             criteria.andUsernameLike("%" + keyword + "%");
             example.or(example.createCriteria().andNickNameLike("%" + keyword + "%"));
         }
-        return adminMapper.selectByExample(example);
+        return adminDao.selectByExample(example);
     }
 
     @Override
