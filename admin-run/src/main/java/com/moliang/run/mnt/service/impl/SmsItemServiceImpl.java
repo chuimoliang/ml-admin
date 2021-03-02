@@ -99,13 +99,13 @@ public class SmsItemServiceImpl implements SmsItemService {
 
     private void verification(SmsItemParam item) {
         String home = "/home";
-        if(!item.getBackupPath().startsWith(home)) {
+        if(item.getBackupPath() != null && !item.getBackupPath().startsWith(home)) {
             throw new ApiException("只能上传到home目录");
         }
-        if(!item.getUploadPath().startsWith(home)) {
+        if(item.getUploadPath() != null && !item.getUploadPath().startsWith(home)) {
             throw new ApiException("只能上传到home目录");
         }
-        if(!item.getDeployPath().startsWith(home)) {
+        if(item.getDeployPath() != null && !item.getDeployPath().startsWith(home)) {
             throw new ApiException("只能上传到home目录");
         }
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moliang.run.mnt.mapper.SmsDeployDao">
+    <insert id="insertGetId" parameterType="com.moliang.run.mnt.model.SmsDeploy">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into sms_deploy (item_id, item_name, server_ip, status, description, create_time, create_by, update_by
+        )
+        values (#{itemId,jdbcType=BIGINT}, #{itemName,jdbcType=VARCHAR},
+        #{serverIp,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+        #{createTime,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+        #{updateBy,jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

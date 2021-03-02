@@ -11,6 +11,7 @@ import java.util.*;
  * @Version 1.0
  */
 public class Solution {
+    
 
     public int longestSubstring(String s, int k) {
         if(s.length() < k) return 0;
@@ -385,4 +386,5 @@ public class Solution {
         }
         return 0;
     }
+
 }

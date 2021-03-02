@@ -7,12 +7,15 @@ import com.moliang.run.mnt.model.SmsDeployParam;
 import com.moliang.run.mnt.model.SmsDeployQueryParam;
 import com.moliang.run.mnt.service.SmsDeployService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
@@ -34,8 +37,8 @@ public class SmsDeployController {
     private SmsDeployService deployService;
 
     @ApiOperation("上传应用")
-    @PutMapping("/upload/{id}")
-    public NorResponse<Object> upload(@RequestBody MultipartFile file, @PathVariable Long id) throws IOException {
+    @PutMapping(value = "/upload/{id}")
+    public NorResponse<Object> upload(@RequestPart("file") MultipartFile file, @PathVariable Long id) throws IOException {
         return NorResponse.success(deployService.upload(file, id));
     }
 

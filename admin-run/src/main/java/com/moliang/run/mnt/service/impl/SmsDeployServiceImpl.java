@@ -40,6 +40,8 @@ public class SmsDeployServiceImpl implements SmsDeployService {
     @Autowired
     private SmsDeployMapper deployMapper;
     @Autowired
+    private SmsDeployDao deployDao;
+    @Autowired
     private SmsServerMapper serverMapper;
     @Autowired
     private SmsItemMapper itemMapper;
@@ -182,11 +184,14 @@ public class SmsDeployServiceImpl implements SmsDeployService {
         if(item == null) {
             throw new ApiException(ResponseCode.VALIDATE_FAILED);
         }
+        List<SmsServer> servers = serverDeployRelationDao.getServersByDeployId(id);
+        if(servers == null || servers.size() == 0) {
+            throw new ApiException("部署未绑定服务器");
+        }
         File itemFile = new File("/home/mlAdmin/jar"+ "/" + item.getName());
         FileUtil.del(itemFile);
         file.transferTo(itemFile);
         String msg;
-        List<SmsServer> servers = serverDeployRelationDao.getServersByDeployId(id);
         for(SmsServer server : servers) {
             ExecuteShellUtil shell = getShell(server);
             boolean exist = checkFile(shell, item);
@@ -283,7 +288,11 @@ public class SmsDeployServiceImpl implements SmsDeployService {
         deploy.setItemName(item.getName());
         deploy.setServerIp(server.getIp());
         deploy.setStatus("新建");
-        deployMapper.insertSelective(deploy);
+        deployDao.insertGetId(deploy);
+        SmsServerDeployRelation relation = new SmsServerDeployRelation();
+        relation.setDeployId(deploy.getId());
+        relation.setServerId(server.getId());
+        serverDeployRelationMapper.insert(relation);
         return deploy;
     }
 
