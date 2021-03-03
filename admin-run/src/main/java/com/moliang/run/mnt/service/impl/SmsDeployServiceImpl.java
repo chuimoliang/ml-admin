@@ -17,6 +17,7 @@ import com.moliang.websocket.SocketMsg;
 import com.moliang.websocket.WebSocketMsgServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,10 @@ public class SmsDeployServiceImpl implements SmsDeployService {
     private SmsDeployDao deployDao;
     @Autowired
     private SmsServerMapper serverMapper;
+    @Autowired
+    private SmsServerDao serverDao;
+    @Autowired
+    private SmsDeployHistoryMapper deployHistoryMapper;
     @Autowired
     private SmsItemMapper itemMapper;
     @Autowired
@@ -71,11 +76,17 @@ public class SmsDeployServiceImpl implements SmsDeployService {
         return count;
     }
 
+    /**
+     * 检查服务器是否有应用占用port
+     */
     private boolean isRunning(int port, ExecuteShellUtil shell) {
         String res = shell.executeForResult(String.format("fuser -n tcp %d", port));
         return res.indexOf("/tcp:") > 0;
     }
 
+    /**
+     * 启动部署
+     */
     public int start(SmsDeploy deploy) {
         List<SmsServer> servers = serverDeployRelationDao.getServersByDeployId(deploy.getId());
         SmsItem item = itemMapper.selectByPrimaryKey(deploy.getItemId());
@@ -90,19 +101,7 @@ public class SmsDeployServiceImpl implements SmsDeployService {
             if(!checkFile(shell, item)) {
                 sendMsg(sb.append("<br>启动失败 : 文件不存在").toString(), MsgType.ERROR);
             }
-            sendMsg("下发启动命令", MsgType.INFO);
-            shell.execute(item.getStartScript());
-            sleep(3);
-            sendMsg("应用启动中, 请耐心等待结果, 或者稍后手动查看运行状态", MsgType.INFO);
-            int i = 0;
-            boolean res = false;
-            while(i++ < 30) {
-                res = isRunning(item.getPort(), shell);
-                if(res) {
-                    break;
-                }
-                sleep(6);
-            }
+            boolean res = start(shell, item);
             if(res) {
                 sb.append("<br>启动成功!");
                 sendMsg(sb.toString(), MsgType.INFO);
@@ -115,6 +114,23 @@ public class SmsDeployServiceImpl implements SmsDeployService {
             shell.close();
         }
         return count;
+    }
+
+    private boolean start(ExecuteShellUtil shell, SmsItem item) {
+        sendMsg("下发启动命令", MsgType.INFO);
+        shell.execute(item.getStartScript());
+        sleep(3);
+        sendMsg("应用启动中, 请耐心等待结果, 或者稍后手动查看运行状态", MsgType.INFO);
+        int i = 0;
+        boolean res = false;
+        while(i++ < 30) {
+            res = isRunning(item.getPort(), shell);
+            if(res) {
+                break;
+            }
+            sleep(6);
+        }
+        return res;
     }
 
     @Override
@@ -206,7 +222,7 @@ public class SmsDeployServiceImpl implements SmsDeployService {
                 sendMsg("停止原来应用", MsgType.INFO);
                 stopItem(item.getPort(), shell);
                 sendMsg("备份原来应用", MsgType.INFO);
-                backUp(shell, item);
+                backUp(shell, item, server.getIp(), id);
             }
             sendMsg("部署应用", MsgType.INFO);
             StringBuilder sb = new StringBuilder();
@@ -231,7 +247,53 @@ public class SmsDeployServiceImpl implements SmsDeployService {
         return count;
     }
 
-    private void backUp(ExecuteShellUtil shell, SmsItem item) {
+    @Override
+    public void serverReduction(Long historyId) {
+        SmsDeployHistory history = deployHistoryMapper.selectByPrimaryKey(historyId);
+        if(history == null) {
+            sendMsg("历史信息不存在 : " + historyId, MsgType.ERROR);
+            throw new ApiException("历史信息不存在");
+        }
+        SmsDeploy deploy = deployMapper.selectByPrimaryKey(history.getDeployId());
+        if(deploy == null) {
+            sendMsg("部署不存在或已删除 : " + history.getId(), MsgType.ERROR);
+            throw new ApiException("部署不存在或已删除");
+        }
+        String historyDate = DateUtil.format(history.getStartDate(), DatePattern.PURE_DATETIME_PATTERN);
+        SmsItem item = itemMapper.selectByPrimaryKey(deploy.getItemId());
+        if(item == null) {
+            sendMsg("应用信息不存在或已删除 : " + deploy.getId(), MsgType.ERROR);
+            throw new ApiException("应用信息不存在或已删除");
+        }
+        String backupPath = item.getBackupPath() + "/" + item.getName() + "/" + historyDate;
+        ExecuteShellUtil shell = getShell(history.getIp());
+        String msg;
+
+        msg = String.format("登陆到服务器:%s", history.getIp());
+        log.info(msg);
+        sendMsg(msg, MsgType.INFO);
+        sendMsg("停止原来应用", MsgType.INFO);
+        //停止应用
+        stopItem(item.getPort(), shell);
+        //删除原来应用
+        sendMsg("删除应用", MsgType.INFO);
+        shell.execute("rm -rf " + item.getDeployPath() + "/" + item.getName());
+        //还原应用
+        sendMsg("还原应用", MsgType.INFO);
+        shell.execute("cp -r " + backupPath + "/. " + item.getDeployPath());
+        sendMsg("启动应用", MsgType.INFO);
+        boolean res = start(shell, item);
+        StringBuilder sb = new StringBuilder();
+        sb.append("服务器:").append(history.getIp()).append("<br>应用:").append(history.getItemName()).append("<br>");
+        if (res) { sendMsg(sb.append("应用还原启动完成").toString(), MsgType.INFO);}
+        else {sendMsg(sb.append("应用还原启动完成").toString(), MsgType.ERROR);}
+        shell.close();
+    }
+
+    /**
+     * 备份
+     */
+    private void backUp(ExecuteShellUtil shell, SmsItem item, String ip, Long id) {
         String backupPath = item.getBackupPath() + "/" + item.getName() + "/" +
                 DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN) + "\n";
         StringBuilder sb = new StringBuilder();
@@ -240,6 +302,13 @@ public class SmsDeployServiceImpl implements SmsDeployService {
                 .append(" ").append(backupPath);
         log.info("备份应用 : " + sb.toString());
         shell.execute(sb.toString());
+        //插入历史信息
+        SmsDeployHistory history = new SmsDeployHistory();
+        history.setIp(ip);
+        history.setDeployId(id);
+        history.setItemName(item.getName());
+        history.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        deployHistoryMapper.insert(history);
     }
 
     private boolean checkFile(ExecuteShellUtil shell, SmsItem item) {
@@ -248,13 +317,6 @@ public class SmsDeployServiceImpl implements SmsDeployService {
         return result.indexOf(item.getName()) > 0;
     }
 
-    private ExecuteShellUtil getShell(SmsServer server) {
-        return new ExecuteShellUtil(server.getIp(), server.getAccount(), server.getPassword(), server.getPort());
-    }
-
-    private ScpClientUtil getScpClientUtil(SmsServer server) {
-        return new ScpClientUtil(server.getIp(),server.getPort(), server.getAccount(), server.getPassword());
-    }
 
     @Override
     public List<SmsDeploy> list(SmsDeployQueryParam param, Integer pageSize, Integer pageNum) {
@@ -369,5 +431,25 @@ public class SmsDeployServiceImpl implements SmsDeployService {
             criteria.andStatusEqualTo(param.getStatus());
         }
         return example;
+    }
+
+    private ExecuteShellUtil getShell(SmsServer server) {
+        return new ExecuteShellUtil(server.getIp(), server.getAccount(), server.getPassword(), server.getPort());
+    }
+
+    private ExecuteShellUtil getShell(String ip) {
+        SmsServer server = serverDao.getByIp(ip);
+        if(server == null) throw new ApiException("服务器不存在");
+        return getShell(server);
+    }
+
+    private ExecuteShellUtil getShell(Long serverId) {
+        SmsServer server = serverMapper.selectByPrimaryKey(serverId);
+        if(server == null) throw new ApiException("服务器不存在");
+        return getShell(server);
+    }
+
+    private ScpClientUtil getScpClientUtil(SmsServer server) {
+        return new ScpClientUtil(server.getIp(),server.getPort(), server.getAccount(), server.getPassword());
     }
 }

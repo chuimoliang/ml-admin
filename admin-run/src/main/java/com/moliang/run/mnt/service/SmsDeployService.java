@@ -82,6 +82,12 @@ public interface SmsDeployService {
     int serverStatus(Long id);
 
     /**
+     * 服务还原
+     * @param historyId 部署历史
+     */
+    void serverReduction(Long historyId);
+
+    /**
      * 启动服务
      * @param id \
      * @return 成功启动的服务器数量

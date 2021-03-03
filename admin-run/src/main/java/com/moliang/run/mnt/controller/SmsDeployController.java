@@ -101,6 +101,13 @@ public class SmsDeployController {
         return NorResponse.failed("停止服务数量为0, 请检查服务器设置");
     }
 
+    @ApiOperation("项目还原")
+    @PutMapping("/reduction/{id}")
+    public NorResponse<Object> reduction(@PathVariable Long historyId) {
+        deployService.serverReduction(historyId);
+        return NorResponse.success(1);
+    }
+
     @ApiOperation("导出部署数据")
     @GetMapping("/download")
     public void download(HttpServletResponse response, SmsDeployQueryParam param) throws IOException {
