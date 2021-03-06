@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  */
 @Controller
 @Api(tags = "AmsAdmin 后台系统用户管理")
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @ResponseBody
 @Slf4j
 public class AmsAdminController {
