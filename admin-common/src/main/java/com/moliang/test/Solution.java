@@ -16,6 +16,57 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Solution {
 
+    int[][] distance;
+    boolean[][] p;
+    int[] ans;
+    int n;
+    public int countRestrictedPaths(int n, int[][] edges) {
+
+        this.ans = new int[n + 1];
+        Arrays.fill(ans, -1);
+        ans[n] = 1;
+        this.n = n;
+        this.distance = new int[n + 1][n + 1];
+        this.p = new boolean[n + 1][n + 1];
+        for(int i = 0;i <= n;i++) {
+            int[] t = distance[i];
+            Arrays.fill(t, Integer.MAX_VALUE);
+            distance[i][i] = 0;
+        }
+        for(int[] t : edges) {
+            distance[t[0]][t[1]] = t[2];
+            distance[t[1]][t[0]] = t[2];
+            p[t[0]][t[1]] = true;
+            p[t[1]][t[0]] = true;
+        }
+        for(int m = 1; m <= n; m++){
+            for(int i = 1;i <= n;i++){
+                for(int j = 1;j <= n;j++){
+                    if(distance[i][m] != Integer.MAX_VALUE && distance[m][j] != Integer.MAX_VALUE &&
+                            distance[i][j] > distance[i][m] + distance[m][j]){
+                        distance[i][j] = distance[i][m] + distance[m][j];
+                        distance[j][i] = distance[i][j];
+                    }
+                }
+            }
+        }
+        return find(1);
+    }
+
+    private int find(int index) {
+        if (ans[index] != -1) return ans[index];
+        int count = 0;
+        for(int i = 1;i <= n;i++) {
+            if(p[index][i] && distance[i][n] < distance[index][n]) {
+                count += find(i);
+                count %= 1000000009;
+            }
+        }
+        ans[index] = count;
+        return count;
+    }
+
+
     public int[] countPairs(int n, int[][] edges, int[] queries) {
         int[] eCnt = new int[n+1];
         HashMap<Integer,Integer> hm = new HashMap<>();
@@ -69,10 +120,9 @@ public class Solution {
         return res;
     }
     public static void main(String[] args) {
-        int[][] t = new int[][]{{1,2}, {2,4}, {1,3}, {2,3}, {2,1}, {1,4}};
-        int[] q = new int[]{2, 3};
+        int[][] t = new int[][]{{1,2,3},{1,3,3},{2,3,1},{1,4,2},{5,2,2},{3,5,1},{5,4,10}};
         Solution s = new Solution();
-        s.countPairs(4, t, q);
+        System.out.println(s.countRestrictedPaths(5, t));
     }
 
     /**
