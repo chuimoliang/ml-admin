@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moliang.run.quartz.mapper.QuartzJobDao">
+    <insert id="insert" parameterType="com.moliang.run.quartz.model.QuartzJob">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into quartz_job (bean_name, cron_expression, status, job_name, method_name, params, description,
+        username, email, sub_task, pause_after_failure, create_by, update_by, create_time)
+        values (#{beanName,jdbcType=VARCHAR}, #{cronExpression,jdbcType=VARCHAR},
+        #{status,jdbcType=BIT}, #{jobName,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR},
+        #{params,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+        #{email,jdbcType=VARCHAR}, #{subTask,jdbcType=VARCHAR}, #{pauseAfterFailure,jdbcType=BIT},
+        #{createBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+</mapper>

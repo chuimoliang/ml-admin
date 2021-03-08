@@ -17,22 +17,23 @@
                         password="ivoeau8912">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.moliang.run.mnt.model"
+        <javaModelGenerator targetPackage="com.moliang.run.quartz.model"
                             targetProject="src/main/java">
             <property name="enableSubPackages" value="false" />
             <property name="trimStrings" value="false" />
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="com.moliang.run.mnt.mapper"
+        <sqlMapGenerator targetPackage="com.moliang.run.quartz.mapper"
                          targetProject="src/main/java">
             <property name="enableSubPackages" value="false" />
         </sqlMapGenerator>
 
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.moliang.run.mnt.mapper" targetProject="src/main/java">
+                             targetPackage="com.moliang.run.quartz.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 数据库表名及对应的 Java 模型类名 -->
-        <table tableName="sms_deploy_history" domainObjectName="SmsDeployHistory"/>
+        <table tableName="quartz_job" domainObjectName="QuartzJob"/>
+        <table tableName="quartz_log" domainObjectName="QuartzLog"/>
     </context>
 </generatorConfiguration>

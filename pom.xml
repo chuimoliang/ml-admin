@@ -255,6 +255,12 @@
             <version>5.3.6</version>
         </dependency>
 
+        <!-- quartz -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>javax.validation</groupId>
