@@ -16,6 +16,48 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Solution {
 
+    public String addStrings(String num1, String num2) {
+        int index1 = num1.length() - 1, index2 = num2.length() - 1, p = 0;
+        StringBuilder sb = new StringBuilder();
+        while (index1 >= 0 || index2 >= 0) {
+            int a = index1 >= 0 ? num1.charAt(index1) - '0' : 0;
+            int b = index2 >= 0 ? num2.charAt(index2) - '0' : 0;
+            int sum = a + b + p;
+            p = sum / 10;
+            sb.append(sum % 10);
+            index1--;
+            index2--;
+        }
+        if (p > 0) sb.append(p);
+        sb.reverse();
+        return sb.toString();
+    }
+
+    public int calculate(String s) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(1);
+        int flag = 0, index = 0, ans = 0;
+        while (index < s.length()) {
+            char c = s.charAt(index);
+            switch (c) {
+                case ' ' : index++; break;
+                case '+' : index++; flag = stack.peek(); break;
+                case '-' : index++; flag = -stack.peek(); break;
+                case '(' : index++; stack.push(flag); break;
+                case ')' : index++; stack.pop(); break;
+                default: {
+                    int num = 0;
+                    while(index < s.length() && s.charAt(index) >= '0' && s.charAt(index) <= '9') {
+                        num = num * 10 + s.charAt(index) - '0';
+                        index++;
+                    }
+                    ans += flag * num;
+                }
+            }
+        }
+        return ans;
+    }
+
     int[][] distance;
     boolean[][] p;
     int[] ans;
@@ -119,10 +161,14 @@ public class Solution {
         }
         return res;
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        Boolean res = (Boolean) null;
+        System.out.println(res);
+        /**
         int[][] t = new int[][]{{1,2,3},{1,3,3},{2,3,1},{1,4,2},{5,2,2},{3,5,1},{5,4,10}};
         Solution s = new Solution();
         System.out.println(s.countRestrictedPaths(5, t));
+         **/
     }
 
     /**

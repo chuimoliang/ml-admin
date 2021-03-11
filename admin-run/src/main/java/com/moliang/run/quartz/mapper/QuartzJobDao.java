@@ -3,6 +3,8 @@ package com.moliang.run.quartz.mapper;
 import com.moliang.run.quartz.model.QuartzJob;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @Use
  * @Author Chui moliang
@@ -18,5 +20,12 @@ public interface QuartzJobDao {
      * @return \
      */
     int insert(QuartzJob job);
+
+    /**
+     * 根据状态获取任务
+     * @param bool \
+     * @return \
+     */
+    List<QuartzJob> selectByStatus(Boolean bool);
 
 }

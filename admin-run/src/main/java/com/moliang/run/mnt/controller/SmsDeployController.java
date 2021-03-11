@@ -1,6 +1,7 @@
 package com.moliang.run.mnt.controller;
 
 import com.moliang.enums.ResponseCode;
+import com.moliang.model.DataPage;
 import com.moliang.model.NorResponse;
 import com.moliang.run.mnt.model.SmsDeploy;
 import com.moliang.run.mnt.model.SmsDeployParam;
@@ -44,10 +45,10 @@ public class SmsDeployController {
 
     @ApiOperation("分页查询部署")
     @GetMapping
-    public NorResponse<List<SmsDeploy>> list(SmsDeployQueryParam param,
+    public NorResponse<Object> list(SmsDeployQueryParam param,
                                              @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        return NorResponse.success(deployService.list(param, pageSize, pageNum));
+        return NorResponse.success(DataPage.restPage(deployService.list(param, pageSize, pageNum)));
     }
 
     @ApiOperation("新增部署")

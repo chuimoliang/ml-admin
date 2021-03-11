@@ -52,6 +52,20 @@ public interface QuartzJobService {
     int update(QuartzJobParam param, Long id, Principal principal);
 
     /**
+     * 更新任务状态
+     * @param job \
+     * @return \
+     */
+    int updateStatus(QuartzJob job);
+
+    /**
+     * 更新任务状态
+     * @param id \
+     * @return \
+     */
+    int updateStatus(Long id);
+
+    /**
      * 删除任务
      * @param ids 任务编号集合
      * @return 删除数量
@@ -64,6 +78,13 @@ public interface QuartzJobService {
      * @return 执行结果
      */
     int execute(Long id);
+
+    /**
+     * 执行子任务
+     * @param tasks \
+     * @return \
+     */
+    int executeSubTasks(String[] tasks) throws InterruptedException;
 
     /**
      * 导出任务记录

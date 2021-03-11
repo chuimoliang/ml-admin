@@ -1,8 +1,9 @@
 package com.moliang.run.quartz.model;
 
-import cn.hutool.core.date.DateTime;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @Use
@@ -17,9 +18,9 @@ public class QuartzJobQueryParam {
     private String keyword;
 
     @ApiModelProperty("最早时间")
-    private DateTime startTime;
+    private Date startTime;
 
     @ApiModelProperty("最晚时间")
-    private DateTime toTime;
+    private Date toTime;
 
 }

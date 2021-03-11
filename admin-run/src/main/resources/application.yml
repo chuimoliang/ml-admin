@@ -55,7 +55,7 @@ secure:
       - /swagger-resources/**
       - /swagger/**
       - /**/v2/api-docs
-      - /admin/login
+      - /api/admin/login
       - /**/*.js
       - /**/*.css
       - /**/*.png
