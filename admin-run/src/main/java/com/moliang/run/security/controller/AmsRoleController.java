@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Controller
 @Api(tags = "AmsRole 后台系统角色管理")
-@RequestMapping("/role")
+@RequestMapping("/api/role")
 @ResponseBody
 public class AmsRoleController {
 

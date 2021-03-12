@@ -79,7 +79,7 @@ public class WebSocketMsgServer {
 
     /**
      * 群发自定义消息
-     * */
+     **/
     public static void sendInfo(SocketMsg socketMsg,@PathParam("sid") String sid) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String message = mapper.writeValueAsString(socketMsg);

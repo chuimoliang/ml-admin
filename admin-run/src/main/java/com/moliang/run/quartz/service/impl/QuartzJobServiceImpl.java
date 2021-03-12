@@ -122,7 +122,9 @@ public class QuartzJobServiceImpl implements QuartzJobService {
         BeanUtils.copyProperties(param, job);
         job.setUpdateBy(principal.getName());
         job.setId(id);
-        return jobMapper.updateByPrimaryKeySelective(job);
+        int ans = jobMapper.updateByPrimaryKeySelective(job);
+        quartzManage.updateJobCron(job);
+        return ans;
     }
 
     @Override

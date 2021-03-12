@@ -16,6 +16,18 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Solution {
 
+    public boolean isValidSerialization(String preorder) {
+        return isValid(preorder, 0) == preorder.length() - 1;
+    }
+
+    private int isValid(String s, int index) {
+        if (index >= s.length()) return -1;
+        if (s.charAt(index) == '#') return index;
+        while (index < s.length() && s.charAt(index) >= '0' && s.charAt(index) <= '9') index++;
+        index = isValid(s, index + 1);
+        return index == -1 ? -1 : isValid(s, index + 2);
+    }
+
     public String addStrings(String num1, String num2) {
         int index1 = num1.length() - 1, index2 = num2.length() - 1, p = 0;
         StringBuilder sb = new StringBuilder();

@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 @Api(tags = "AmsResourceCategory 资源分类管理")
 @ResponseBody
-@RequestMapping("/resourceCategory")
+@RequestMapping("/api/resourceCategory")
 public class AmsResourceCategoryController {
 
     @Autowired

@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Controller
 @Api(tags = "AmsResource 后台系统资源管理")
-@RequestMapping("/resource")
+@RequestMapping("/api/resource")
 @ResponseBody
 public class AmsResourceController {
 

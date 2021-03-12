@@ -81,7 +81,7 @@ public class QuartzManage {
 
             scheduler.rescheduleJob(triggerKey, trigger);
             // 暂停任务
-            if (quartzJob.getStatus() == JobStatus.ENABLE.getCode()) {
+            if (quartzJob.getStatus() == JobStatus.CANCEL.getCode()) {
                 pauseJob(quartzJob);
             }
         } catch (Exception e){

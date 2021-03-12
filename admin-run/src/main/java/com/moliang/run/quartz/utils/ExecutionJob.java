@@ -71,7 +71,7 @@ public class ExecutionJob extends QuartzJobBean {
             logger.info("任务执行完毕，任务名称：" + quartzJob.getJobName() + ", 执行时间：" + times + "毫秒");
             logger.info("--------------------------------------------------------------");
             // 判断是否存在子任务
-            if(quartzJob.getSubTask() != null){
+            if(StringUtils.isNotBlank(quartzJob.getSubTask())) {
                 String[] tasks = quartzJob.getSubTask().split("[,，]");
                 // 执行子任务
                 quartzJobService.executeSubTasks(tasks);
