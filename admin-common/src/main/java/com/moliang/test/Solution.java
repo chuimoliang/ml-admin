@@ -1,12 +1,7 @@
 package com.moliang.test;
 
-import cn.hutool.extra.template.engine.freemarker.FreemarkerTemplate;
-import com.alibaba.druid.support.ibatis.SqlMapClientImplWrapper;
-
+import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @Use
@@ -16,210 +11,45 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Solution {
 
-    public boolean isValidSerialization(String preorder) {
-        return isValid(preorder, 0) == preorder.length() - 1;
-    }
+    class MedianFinder {
 
-    private int isValid(String s, int index) {
-        if (index >= s.length()) return -1;
-        if (s.charAt(index) == '#') return index;
-        while (index < s.length() && s.charAt(index) >= '0' && s.charAt(index) <= '9') index++;
-        index = isValid(s, index + 1);
-        return index == -1 ? -1 : isValid(s, index + 2);
-    }
+        PriorityQueue<Integer> max;
+        PriorityQueue<Integer> min;
 
-    public String addStrings(String num1, String num2) {
-        int index1 = num1.length() - 1, index2 = num2.length() - 1, p = 0;
-        StringBuilder sb = new StringBuilder();
-        while (index1 >= 0 || index2 >= 0) {
-            int a = index1 >= 0 ? num1.charAt(index1) - '0' : 0;
-            int b = index2 >= 0 ? num2.charAt(index2) - '0' : 0;
-            int sum = a + b + p;
-            p = sum / 10;
-            sb.append(sum % 10);
-            index1--;
-            index2--;
+        public MedianFinder() {
+            max = new PriorityQueue<>((o1, o2)-> o2 - o1);
+            min = new PriorityQueue<>();
         }
-        if (p > 0) sb.append(p);
-        sb.reverse();
-        return sb.toString();
-    }
 
-    public int calculate(String s) {
-        Stack<Integer> stack = new Stack<>();
-        stack.push(1);
-        int flag = 0, index = 0, ans = 0;
-        while (index < s.length()) {
-            char c = s.charAt(index);
-            switch (c) {
-                case ' ' : index++; break;
-                case '+' : index++; flag = stack.peek(); break;
-                case '-' : index++; flag = -stack.peek(); break;
-                case '(' : index++; stack.push(flag); break;
-                case ')' : index++; stack.pop(); break;
-                default: {
-                    int num = 0;
-                    while(index < s.length() && s.charAt(index) >= '0' && s.charAt(index) <= '9') {
-                        num = num * 10 + s.charAt(index) - '0';
-                        index++;
-                    }
-                    ans += flag * num;
-                }
-            }
-        }
-        return ans;
-    }
-
-    int[][] distance;
-    boolean[][] p;
-    int[] ans;
-    int n;
-    public int countRestrictedPaths(int n, int[][] edges) {
-
-        this.ans = new int[n + 1];
-        Arrays.fill(ans, -1);
-        ans[n] = 1;
-        this.n = n;
-        this.distance = new int[n + 1][n + 1];
-        this.p = new boolean[n + 1][n + 1];
-        for(int i = 0;i <= n;i++) {
-            int[] t = distance[i];
-            Arrays.fill(t, Integer.MAX_VALUE);
-            distance[i][i] = 0;
-        }
-        for(int[] t : edges) {
-            distance[t[0]][t[1]] = t[2];
-            distance[t[1]][t[0]] = t[2];
-            p[t[0]][t[1]] = true;
-            p[t[1]][t[0]] = true;
-        }
-        for(int m = 1; m <= n; m++){
-            for(int i = 1;i <= n;i++){
-                for(int j = 1;j <= n;j++){
-                    if(distance[i][m] != Integer.MAX_VALUE && distance[m][j] != Integer.MAX_VALUE &&
-                            distance[i][j] > distance[i][m] + distance[m][j]){
-                        distance[i][j] = distance[i][m] + distance[m][j];
-                        distance[j][i] = distance[i][j];
-                    }
-                }
-            }
-        }
-        return find(1);
-    }
-
-    private int find(int index) {
-        if (ans[index] != -1) return ans[index];
-        int count = 0;
-        for(int i = 1;i <= n;i++) {
-            if(p[index][i] && distance[i][n] < distance[index][n]) {
-                count += find(i);
-                count %= 1000000009;
-            }
-        }
-        ans[index] = count;
-        return count;
-    }
-
-
-    public int[] countPairs(int n, int[][] edges, int[] queries) {
-        int[] eCnt = new int[n+1];
-        HashMap<Integer,Integer> hm = new HashMap<>();
-        int m = edges.length;
-        for(int i=0;i<m;i++) {
-            eCnt[edges[i][0]] ++;
-            eCnt[edges[i][1]] ++;
-            int code;
-            if(edges[i][0]<edges[i][1]) {
-                code = edges[i][0]*(n+1)+edges[i][1];
+        public void addNum(int num) {
+            if (max.isEmpty() || max.peek() > num) {
+                max.add(num);
             } else {
-                code = edges[i][1]*(n+1)+edges[i][0];
+                min.add(num);
             }
-            hm.put(code,hm.getOrDefault(code,0)+1);
-        }
-        HashMap<Integer,Integer> hm1 = new HashMap<>();
-        for(int i=1;i<=n;i++) {
-            hm1.put(eCnt[i],hm1.getOrDefault(eCnt[i],0)+1);
-        }
-        int[] cnt = new int[2*m+1];
-        // System.out.println(Arrays.toString(eCnt));
-        // System.out.println(hm.toString());
-        ArrayList<Integer> ar = new ArrayList<>(hm1.keySet());
-        for(int i=0;i<ar.size();i++) {
-            int key =ar.get(i);
-            for(int j=i;j<ar.size();j++) {
-                if (i==j) {
-                    cnt[2*key] += hm1.get(key)*(hm1.get(key)-1)/2;
-                } else {
-                    int key2 = ar.get(j);
-                    cnt[key+key2] += hm1.get(key)*hm1.get(key2);
-                }
+            if (max.size() > min.size() + 1) {
+                min.add(max.poll());
+            }
+            if (min.size() > max.size() + 1) {
+                max.add(min.poll());
             }
         }
-        for(Integer code:hm.keySet()) {
-            int x = code / (n+1);
-            int y = code % (n+1);
-            int sum = eCnt[x]+eCnt[y];
-            cnt[sum] --;
-            cnt[sum-hm.get(code)]++;
-        }
-        // System.out.println(Arrays.toString(cnt));
-        int[] res = new int[queries.length];
-        for(int i=0;i<queries.length;i++) {
-            int sum=0;
-            for(int j=queries[i]+1;j<=m;j++) {
-                sum += cnt[j];
+
+        public double findMedian() {
+            if (max.size() == min.size()) {
+                return (max.peek() + min.peek()) / 2.0;
             }
-            res[i] = sum;
+            return max.size() > min.size() ? max.peek() : min.peek();
         }
-        return res;
-    }
-    public static void main(String[] args) throws Exception {
-        Boolean res = (Boolean) null;
-        System.out.println(res);
-        /**
-        int[][] t = new int[][]{{1,2,3},{1,3,3},{2,3,1},{1,4,2},{5,2,2},{3,5,1},{5,4,10}};
-        Solution s = new Solution();
-        System.out.println(s.countRestrictedPaths(5, t));
-         **/
     }
 
-    /**
-    static int i = 0;
 
-    public static synchronized void add() {
-        i++;
-    }
-    public static void main(String[] args) {
-        ReentrantLock lock = new ReentrantLock();
-        Semaphore semaphore = new Semaphore(2);
-        int index = 0, count = 0;
-        Solution s1 = new Solution();
-        Solution s2 = new Solution();
-        Solution s3 = new Solution();
-        while(index < 100) {
-            i = 0;
-            Thread t1 = new Thread(() -> {
-                for (int t = 0; t < 1000; t++) s1.add();
-            });
-            Thread t2 = new Thread(() -> {
-                for (int t = 0; t < 1000; t++) s2.add();
-            });
-            Thread t3 = new Thread(() -> {
-                for (int t = 0; t < 1000; t++) s3.add();
-            });
-            Thread t4 = new Thread(() -> {
-                for (int t = 0; t < 1000; t++) s1.add();
-            });
-            t1.start();
-            t2.start();
-            t3.start();
-            t4.start();
-            while (t1.isAlive() || t2.isAlive() || t3.isAlive() || t4.isAlive()) {
-            }
-            if(i < 4000) count++;
-            index++;
+    public static void main(String[] args) throws ClassNotFoundException {
+        Class t = Class.forName(String.valueOf("com.moliang.test.Solution"));
+        for (Method m : t.getMethods()) {
+            System.out.println(m);
         }
-        System.out.println(count);
+        Class p = Class.forName(String.valueOf("com.moliang.test.Solution"));
+        System.out.println(t == p);
     }
-     */
 }

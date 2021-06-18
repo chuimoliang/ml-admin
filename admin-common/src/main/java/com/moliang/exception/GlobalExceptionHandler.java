@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = BindException.class)
-    public NorResponse handleException(BindException e) {
+    public NorResponse<Object> handleException(BindException e) {
         BindingResult bindingResult = e.getBindingResult();
         log.info("BindException.class");
         String message = null;
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public NorResponse handleValidException(MethodArgumentNotValidException e) {
+    public NorResponse<Object> handleValidException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
         log.info("MethodArgumentNotValidException.class");
         String message = null;

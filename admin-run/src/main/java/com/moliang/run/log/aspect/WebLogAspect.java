@@ -64,6 +64,7 @@ public class WebLogAspect {
 
     @Around("webLog()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        StringBuilder sb = new StringBuilder();
         long startTime = System.currentTimeMillis();
         //获取当前请求对象
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
